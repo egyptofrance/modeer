@@ -99,7 +99,7 @@ export async function getWorkspaces(userId: string) {
 
   const { data, error } = await supabaseClient
     .from("workspace_members")
-    .select("workspace_id, workspaces(id, slug, title, is_solo)")
+    .select("workspace_id, workspaces(id, slug, name, is_solo)")
     .eq("user_id", userId);
 
   if (error) throw error;
