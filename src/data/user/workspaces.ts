@@ -431,11 +431,29 @@ export async function getMaybeDefaultWorkspace(): Promise<{
   const supabaseClient = await createSupabaseUserServerComponentClient();
   const user = await serverGetLoggedInUserVerified();
 
+  // Get workspace IDs from workspace_members first (for RLS)
+  const { data: workspaceMembers, error: membersError } = await supabaseClient
+    .from("workspace_members")
+    .select("workspace_id")
+    .eq("workspace_member_id", user.id);
+
+  if (membersError) {
+    throw membersError;
+  }
+
+  if (!workspaceMembers || workspaceMembers.length === 0) {
+    return null;
+  }
+
   // Check for solo workspace
   const [workspaceListResponse, userSettingsResponse] = await Promise.all([
     supabaseClient
       .from("workspaces")
-      .select("*, workspace_application_settings(*)"),
+      .select("*, workspace_application_settings(*)")
+      .in(
+        "id",
+        workspaceMembers.map((member) => member.workspace_id),
+      ),
     supabaseClient.from("user_settings").select("*").eq("id", user.id).single(),
   ]);
 
