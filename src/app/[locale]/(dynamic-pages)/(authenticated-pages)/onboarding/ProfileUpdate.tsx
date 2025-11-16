@@ -94,9 +94,14 @@ export function ProfileUpdate() {
               <div className="relative w-12 h-12 shrink-0">
                 <Image
                   fill
+                  unoptimized
                   className="rounded-full object-cover"
                   src={avatarUrlWithFallback}
                   alt="User avatar"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.src = "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp";
+                  }}
                 />
               </div>
               <input
@@ -130,7 +135,7 @@ export function ProfileUpdate() {
             data-testid="full-name-input"
           />
         </CardContent>
-        <CardFooter>
+        <CardFooter className="mt-6">
           <Button
             type="submit"
             className="w-full"
