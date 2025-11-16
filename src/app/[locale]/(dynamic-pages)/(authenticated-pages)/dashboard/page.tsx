@@ -2,6 +2,7 @@ import { serverGetLoggedInUserVerified } from "@/utils/server/serverGetLoggedInU
 import { redirect } from "next/navigation";
 import { getMaybeDefaultWorkspace } from "@/data/user/workspaces";
 import { getWorkspaceSubPath } from "@/utils/workspaces";
+import Link from "next/link";
 
 /**
  * Dashboard Page
@@ -35,12 +36,12 @@ export default async function DashboardPage() {
         <p className="text-gray-600 mb-6">
           No workspace found. Please create a new workspace to get started.
         </p>
-        <a 
+        <Link 
           href="/onboarding" 
           className="inline-block px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors"
         >
           Create Workspace
-        </a>
+        </Link>
       </div>
     </div>
   );
