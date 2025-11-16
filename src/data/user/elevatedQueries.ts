@@ -150,6 +150,8 @@ export const addUserAsWorkspaceOwner = async ({
   workspaceId: string;
   userId: string;
 }) => {
+  console.log("[addUserAsWorkspaceOwner] Starting - workspaceId:", workspaceId, "userId:", userId);
+  
   const { data, error } = await supabaseAdminClient
     .from("workspace_members")
     .insert({
@@ -159,9 +161,11 @@ export const addUserAsWorkspaceOwner = async ({
     });
 
   if (error) {
+    console.error("[addUserAsWorkspaceOwner] Error:", error);
     throw error;
   }
 
+  console.log("[addUserAsWorkspaceOwner] Success - data:", data);
   return data;
 };
 

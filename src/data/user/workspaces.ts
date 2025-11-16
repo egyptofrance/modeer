@@ -177,6 +177,7 @@ export const createWorkspaceAction = authActionClient
         throw new Error(error.message);
       }
 
+      console.log("[createWorkspace] Adding user as owner and setting membership type");
       await Promise.all([
         addUserAsWorkspaceOwner({ workspaceId, userId }),
         updateWorkspaceMembershipType({
@@ -184,6 +185,7 @@ export const createWorkspaceAction = authActionClient
           workspaceMembershipType: workspaceType,
         }),
       ]);
+      console.log("[createWorkspace] User added as owner successfully");
 
       if (isOnboardingFlow) {
         // Create dummy projects
