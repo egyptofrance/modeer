@@ -113,7 +113,16 @@ export function FinishingUp() {
   useMinDelayCondition({
     enabled: currentStepId === "FINISHING_UP",
     onComplete: () => {
-      router.push("/dashboard");
+      // Get the workspace slug from the createWorkspaceActionState result
+      const workspaceSlug = createWorkspaceActionState.result?.data;
+      
+      if (workspaceSlug) {
+        // Redirect to the newly created workspace home page
+        router.push(`/workspace/${workspaceSlug}/home`);
+      } else {
+        // Fallback to dashboard if no workspace was created
+        router.push("/dashboard");
+      }
     },
     minDelayMs: 500,
     condition: true,
