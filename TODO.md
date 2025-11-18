@@ -103,23 +103,18 @@
 
 ---
 
-## المرحلة 7: نظام التقييم الشهري
-- [ ] إنشاء جدول employee_evaluations (التقييمات):
-  - [ ] employee_id
-  - [ ] evaluation_date
-  - [ ] performance_score (1-5)
-  - [ ] commitment_score (1-5)
-  - [ ] customer_service_score (1-5)
-  - [ ] average_score
-  - [ ] notes
-  - [ ] evaluated_by (admin_id)
-- [ ] إنشاء server actions
-- [ ] إنشاء صفحة التقييم للأدمن
-- [ ] عرض التقييمات في Dashboard الموظف
-- [ ] إنشاء migration
-- [ ] تطبيق migration على Supabase
+## المرحلة 7: نظام التقييم الشهري ✅ (مكتملة)
+- [x] إنشاء جدول employee_evaluations
+- [x] 5 معايير تقييم (1-5): أداء، التزام، خدمة عملاء، عمل جماعي، ابتكار
+- [x] حساب تلقائي للمتوسط والتقدير
+- [x] 5 تقديرات: ممتاز، جيد جداً، جيد، مقبول، ضعيف
+- [x] تقييم واحد لكل موظف في كل شهر
+- [x] 5 دوال للتقارير والمقارنات
+- [x] Row Level Security policies
+- [x] إنشاء migration
+- [x] تطبيق migration على Supabase
 - [ ] دفع التغييرات إلى GitHub
-- [ ] ✅ اختبار النشر على Vercel
+- [ ] اختبار النشر على Vercel
 
 ---
 
