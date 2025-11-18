@@ -87,8 +87,9 @@ export default function ReceptionDashboard() {
       const result = await getCustomerByCode({ customer_code: customerCode });
       
       if (result?.data) {
-        setCurrentCustomer(result.data);
-        setDeviceForm({ ...deviceForm, customer_id: result.data.id });
+        const customer = result.data as any;
+        setCurrentCustomer(customer);
+        setDeviceForm({ ...deviceForm, customer_id: customer.id });
         toast.success('تم العثور على العميل');
       } else {
         toast.error('لم يتم العثور على العميل');
