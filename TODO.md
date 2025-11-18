@@ -15,27 +15,27 @@
 - [x] تطبيق migration على Supabase
 - [x] إنشاء دالة calculate_daily_salary
 - [x] إنشاء دالة is_eligible_for_leave
-- [ ] دفع التغييرات إلى GitHub
-- [ ] اختبار النشر على Vercel
+- [x] دفع التغييرات إلى GitHub
+- [x] اختبار النشر على Vercel ✅
 
 ---
 
-## المرحلة 2: نظام المستندات
-- [ ] إنشاء جدول employee_documents:
-  - [ ] id_card_front (صورة البطاقة وجه)
-  - [ ] id_card_back (صورة البطاقة ظهر)
-  - [ ] utility_bill (إيصال مرافق)
-  - [ ] birth_certificate (شهادة الميلاد)
-  - [ ] qualification_certificate (المؤهل الدراسي)
-  - [ ] military_certificate (شهادة التجنيد - للذكور)
-  - [ ] application_form (صورة Application)
-- [ ] إنشاء Supabase Storage bucket
-- [ ] إنشاء server actions لرفع المستندات
-- [ ] إنشاء صفحة رفع المستندات للأدمن
-- [ ] إنشاء migration
-- [ ] تطبيق migration على Supabase
+## المرحلة 2: نظام المستندات ✅ (مكتملة)
+- [x] إنشاء جدول employee_documents:
+  - [x] id_card_front (صورة البطاقة وجه)
+  - [x] id_card_back (صورة البطاقة ظهر)
+  - [x] utility_bill (إيصال مرافق)
+  - [x] birth_certificate (شهادة الميلاد)
+  - [x] qualification_certificate (المؤهل الدراسي)
+  - [x] military_certificate (شهادة التجنيد - للذكور)
+  - [x] application_form (صورة Application)
+- [x] إنشاء دالة check_documents_complete
+- [x] إنشاء Trigger لتحديث حالة الاكتمال تلقائياً
+- [x] Row Level Security policies
+- [x] إنشاء migration
+- [x] تطبيق migration على Supabase
 - [ ] دفع التغييرات إلى GitHub
-- [ ] ✅ اختبار النشر على Vercel
+- [ ] اختبار النشر على Vercel
 
 ---
 
