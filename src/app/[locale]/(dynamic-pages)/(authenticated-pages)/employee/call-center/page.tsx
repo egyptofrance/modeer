@@ -147,7 +147,7 @@ export default function CallCenterDashboard() {
       setIsCreatingCustomer(true);
       const result = await createCustomer({
         ...customerForm,
-        employee_id: employee.id,
+        assigned_by_employee_id: employee.id,
       });
 
       if (result?.data) {
