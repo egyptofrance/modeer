@@ -36,21 +36,17 @@ export const createCustomer = authActionClient
   .action(async ({ parsedInput }) => {
     const supabase = await createSupabaseUserServerActionClient();
 
-    // Generate customer code
-    const { data: codeData, error: codeError } = await supabase.rpc(
-      'generate_customer_code',
-      { p_employee_id: parsedInput.assigned_by_employee_id }
-    );
-
-    if (codeError) {
-      throw new Error('Failed to generate customer code: ' + codeError.message);
-    }
+    // Generate customer code locally
+    // Format: {employee_id}-{timestamp}-{random}
+    const timestamp = Date.now().toString().slice(-6);
+    const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+    const customerCode = `${parsedInput.assigned_by_employee_id}-${timestamp}-${random}`;
 
     // Create customer
     const { data, error } = await supabase
       .from('customers')
       .insert({
-        customer_code: codeData,
+        customer_code: customerCode,
         full_name: parsedInput.full_name,
         phone: parsedInput.phone,
         email: parsedInput.email,
