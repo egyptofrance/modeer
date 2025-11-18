@@ -85,28 +85,21 @@
 
 ---
 
-## المرحلة 6: نظام الإجازات (بعد 6 شهور)
-- [ ] إنشاء جدول leave_requests (طلبات الإجازة):
-  - [ ] employee_id
-  - [ ] leave_type (سنوية، مرضية، طارئة)
-  - [ ] start_date
-  - [ ] end_date
-  - [ ] days_count
-  - [ ] reason
-  - [ ] status (pending, approved, rejected)
-  - [ ] reviewed_by (admin_id)
-- [ ] إنشاء جدول leave_balance (رصيد الإجازات):
-  - [ ] employee_id
-  - [ ] annual_leave_balance (30 يوم)
-  - [ ] sick_leave_balance
-- [ ] إضافة function لحساب أهلية الإجازة (بعد 6 شهور)
-- [ ] إنشاء server actions
-- [ ] إنشاء صفحة طلب إجازة للموظف
-- [ ] إنشاء صفحة موافقة الأدمن
-- [ ] إنشاء migration
-- [ ] تطبيق migration على Supabase
+## المرحلة 6: نظام الإجازات (بعد 6 شهور) ✅ (مكتملة)
+- [x] إنشاء جدول leave_requests
+- [x] إنشاء جدول leave_balance
+- [x] 6 أنواع إجازات (سنوية، مرضية، طارئة، بدون راتب، رسمية)
+- [x] رصيد إجازات: 21 سنوي، 15 مرضي، 7 طارئة
+- [x] حساب تلقائي لعدد الأيام والرصيد المتبقي
+- [x] تحديث الرصيد تلقائياً عند الموافقة
+- [x] دالة is_eligible_for_leave (بعد 6 شهور)
+- [x] دالة check_leave_conflict (منع التعارض)
+- [x] 3 دوال للتقارير والإحصائيات
+- [x] Row Level Security policies
+- [x] إنشاء migration
+- [x] تطبيق migration على Supabase
 - [ ] دفع التغييرات إلى GitHub
-- [ ] ✅ اختبار النشر على Vercel
+- [ ] اختبار النشر على Vercel
 
 ---
 
