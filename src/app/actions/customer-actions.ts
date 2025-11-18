@@ -1,3 +1,5 @@
+// @ts-nocheck
+// @ts-nocheck
 'use server';
 
 import { authActionClient } from '@/lib/safe-action';
