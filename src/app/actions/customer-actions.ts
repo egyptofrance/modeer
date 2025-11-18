@@ -134,6 +134,34 @@ export const updateCustomer = authActionClient
     return { success: true, data };
   });
 
+// Mark customer as visited
+export const markCustomerAsVisited = authActionClient
+  .schema(z.object({ 
+    customer_id: z.string().uuid(),
+    employee_id: z.string().uuid()
+  }))
+  .action(async ({ parsedInput }) => {
+    const supabase = await createSupabaseUserServerActionClient();
+
+    // Update customer to mark as visited
+    const { data, error } = await supabase
+      .from('customers')
+      .update({
+        has_visited: true,
+        registered_by_employee_id: parsedInput.employee_id,
+        visit_date: new Date().toISOString(),
+      })
+      .eq('id', parsedInput.customer_id)
+      .select('*, assigned_by_employee:employees!assigned_by_employee_id(*), registered_by_employee:employees!registered_by_employee_id(*)')
+      .single();
+
+    if (error) {
+      throw new Error('Failed to mark customer as visited: ' + error.message);
+    }
+
+    return { success: true, data };
+  });
+
 // Get customer by code
 export const getCustomerByCode = authActionClient
   .schema(z.object({ customer_code: z.string().min(1) }))
