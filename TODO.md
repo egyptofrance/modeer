@@ -39,19 +39,20 @@
 
 ---
 
-## المرحلة 3: جدول الحوافز المقررة
-- [ ] إنشاء جدول incentive_rules:
-  - [ ] employee_type_id
-  - [ ] incentive_name
-  - [ ] incentive_amount
-  - [ ] incentive_description
-- [ ] إضافة حوافز افتراضية لكل نوع وظيفة
-- [ ] إنشاء server actions لإدارة الحوافز المقررة
-- [ ] إنشاء صفحة للأدمن لتعديل الحوافز
-- [ ] إنشاء migration
-- [ ] تطبيق migration على Supabase
+## المرحلة 3: جدول الحوافز المقررة ✅ (مكتملة)
+- [x] إنشاء جدول incentive_rules:
+  - [x] employee_type_id
+  - [x] incentive_name
+  - [x] incentive_amount
+  - [x] incentive_type (ثابت/متغير/نسبة مئوية)
+  - [x] description & conditions
+- [x] إضافة حوافز افتراضية لكل 7 أنواع وظائف
+- [x] إنشاء دالة get_employee_total_incentives
+- [x] Row Level Security policies
+- [x] إنشاء migration
+- [x] تطبيق migration على Supabase
 - [ ] دفع التغييرات إلى GitHub
-- [ ] ✅ اختبار النشر على Vercel
+- [ ] اختبار النشر على Vercel
 
 ---
 
