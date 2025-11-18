@@ -64,8 +64,8 @@ export default function CallCenterDashboard() {
       // استدعاء getEmployeeByUserId مباشرة
       const empResult = await getEmployeeByUserId();
       
-      if (empResult?.success && empResult?.data) {
-        const emp = empResult.data;
+      if (empResult?.data?.success && empResult?.data?.data) {
+        const emp = empResult.data.data;
         setEmployee(emp);
 
         // Load statistics
