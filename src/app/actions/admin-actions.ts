@@ -1,7 +1,7 @@
 // @ts-nocheck
 'use server';
 
-import { createClient } from '@/lib/supabase/server';
+import { createSupabaseUserServerActionClient } from '@/supabase-clients/user/createSupabaseUserServerActionClient';
 import { authActionClient } from '@/lib/safe-action';
 import { z } from 'zod';
 
@@ -38,7 +38,7 @@ const deleteEmployeeSchema = z.object({
 export const checkIsAdmin = authActionClient
   .schema(z.object({}))
   .action(async () => {
-    const supabase = await createClient();
+    const supabase = await createSupabaseUserServerActionClient();
     
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
@@ -60,7 +60,7 @@ export const checkIsAdmin = authActionClient
 export const getCurrentAdmin = authActionClient
   .schema(z.object({}))
   .action(async () => {
-    const supabase = await createClient();
+    const supabase = await createSupabaseUserServerActionClient();
     
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
@@ -83,7 +83,7 @@ export const getCurrentAdmin = authActionClient
 export const createEmployeeWithAuth = authActionClient
   .schema(createEmployeeWithAuthSchema)
   .action(async ({ parsedInput }) => {
-    const supabase = await createClient();
+    const supabase = await createSupabaseUserServerActionClient();
     
     // Check if user is admin
     const { data: { user } } = await supabase.auth.getUser();
@@ -162,7 +162,7 @@ export const createEmployeeWithAuth = authActionClient
 export const getAllEmployees = authActionClient
   .schema(z.object({}))
   .action(async () => {
-    const supabase = await createClient();
+    const supabase = await createSupabaseUserServerActionClient();
     
     // Check if user is admin
     const { data: { user } } = await supabase.auth.getUser();
@@ -198,7 +198,7 @@ export const getAllEmployees = authActionClient
 export const updateEmployeeAsAdmin = authActionClient
   .schema(updateEmployeeSchema)
   .action(async ({ parsedInput }) => {
-    const supabase = await createClient();
+    const supabase = await createSupabaseUserServerActionClient();
     
     // Check if user is admin
     const { data: { user } } = await supabase.auth.getUser();
@@ -235,7 +235,7 @@ export const updateEmployeeAsAdmin = authActionClient
 export const deleteEmployee = authActionClient
   .schema(deleteEmployeeSchema)
   .action(async ({ parsedInput }) => {
-    const supabase = await createClient();
+    const supabase = await createSupabaseUserServerActionClient();
     
     // Check if user is admin
     const { data: { user } } = await supabase.auth.getUser();
@@ -282,7 +282,7 @@ export const deleteEmployee = authActionClient
 export const getSystemStatistics = authActionClient
   .schema(z.object({}))
   .action(async () => {
-    const supabase = await createClient();
+    const supabase = await createSupabaseUserServerActionClient();
     
     // Check if user is admin
     const { data: { user } } = await supabase.auth.getUser();
