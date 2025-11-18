@@ -60,7 +60,7 @@ export default function CallCenterDashboard() {
   }, []);
 
   const loadEmployeeData = async () => {
-    const result = await executeGetEmployee({});
+    const result = await executeGetEmployee();
     if (result?.data?.success) {
       const emp = result.data.data;
       setEmployee(emp);
