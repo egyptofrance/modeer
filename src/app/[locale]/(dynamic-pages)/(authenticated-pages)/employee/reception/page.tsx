@@ -109,7 +109,10 @@ export default function ReceptionDashboard() {
 
     try {
       setIsMarkingVisit(true);
-      const result = await markCustomerAsVisited({ customer_id: currentCustomer.id });
+      const result = await markCustomerAsVisited({ 
+        employee_id: employee.id,
+        customer_id: currentCustomer.id 
+      });
       
       if (result?.data) {
         toast.success('تم تسجيل حضور العميل بنجاح');
