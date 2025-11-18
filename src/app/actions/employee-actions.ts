@@ -107,7 +107,7 @@ export const getEmployeeByUserId = authActionClient.action(async ({ ctx }) => {
     throw new Error('Failed to get employee: ' + error.message);
   }
 
-  return { success: true, data };
+  return data;
 });
 
 // Get employee statistics

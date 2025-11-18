@@ -58,8 +58,8 @@ export default function ReceptionDashboard() {
       setIsLoading(true);
       const empResult = await getEmployeeByUserId();
       
-      if (empResult?.data?.success && empResult?.data?.data) {
-        const emp = empResult.data.data;
+      if (empResult?.data) {
+        const emp = empResult.data;
         setEmployee(emp);
 
         // Load daily total
