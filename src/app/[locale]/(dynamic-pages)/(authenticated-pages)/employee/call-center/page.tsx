@@ -151,7 +151,7 @@ export default function CallCenterDashboard() {
       });
 
       if (result?.data) {
-        toast.success(`تم تسجيل العميل بنجاح. كود العميل: ${result.data.customer_code}`);
+        toast.success('تم تسجيل العميل بنجاح');
         setCustomerForm({
           full_name: '',
           phone: '',

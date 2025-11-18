@@ -139,7 +139,7 @@ export default function ReceptionDashboard() {
       });
 
       if (result?.data) {
-        toast.success(`تم تسجيل الجهاز بنجاح. كود الجهاز: ${result.data.device_code}`);
+        toast.success('تم تسجيل الجهاز بنجاح');
         setDeviceForm({
           customer_id: currentCustomer.id,
           device_type: '',
