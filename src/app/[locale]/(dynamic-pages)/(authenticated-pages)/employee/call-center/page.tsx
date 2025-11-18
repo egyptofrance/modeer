@@ -28,6 +28,7 @@ export default function CallCenterDashboard() {
   const [todayIncentives, setTodayIncentives] = useState<any[]>([]);
   const [customers, setCustomers] = useState<any[]>([]);
   const [isCheckedIn, setIsCheckedIn] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   // Form state
   const [customerForm, setCustomerForm] = useState({
@@ -39,8 +40,6 @@ export default function CallCenterDashboard() {
   });
 
   // Actions
-  const { execute: executeGetEmployee, isExecuting: isLoadingEmployee } =
-    useAction(getEmployeeByUserId);
   const { execute: executeGetStats } = useAction(getEmployeeStatistics);
   const { execute: executeGetDailyTotal } = useAction(getEmployeeDailyTotal);
   const { execute: executeGetTodayIncentives } = useAction(
@@ -60,36 +59,46 @@ export default function CallCenterDashboard() {
   }, []);
 
   const loadEmployeeData = async () => {
-    const result = await executeGetEmployee();
-    if (result?.data?.success) {
-      const emp = result.data.data;
-      setEmployee(emp);
+    try {
+      setIsLoading(true);
+      // استدعاء getEmployeeByUserId مباشرة
+      const empResult = await getEmployeeByUserId();
+      
+      if (empResult?.success && empResult?.data) {
+        const emp = empResult.data;
+        setEmployee(emp);
 
-      // Load statistics
-      const statsResult = await executeGetStats({ employee_id: emp.id });
-      if (statsResult?.data?.success) {
-        setStatistics(statsResult.data.data);
-      }
+        // Load statistics
+        const statsResult = await executeGetStats({ employee_id: emp.id });
+        if (statsResult?.data?.success) {
+          setStatistics(statsResult.data.data);
+        }
 
-      // Load daily total
-      const dailyResult = await executeGetDailyTotal({ employee_id: emp.id });
-      if (dailyResult?.data?.success) {
-        setDailyTotal(dailyResult.data.data);
-      }
+        // Load daily total
+        const dailyResult = await executeGetDailyTotal({ employee_id: emp.id });
+        if (dailyResult?.data?.success) {
+          setDailyTotal(dailyResult.data.data);
+        }
 
-      // Load today's incentives
-      const incentivesResult = await executeGetTodayIncentives({
-        employee_id: emp.id,
-      });
-      if (incentivesResult?.data?.success) {
-        setTodayIncentives(incentivesResult.data.data);
-      }
+        // Load today's incentives
+        const incentivesResult = await executeGetTodayIncentives({
+          employee_id: emp.id,
+        });
+        if (incentivesResult?.data?.success) {
+          setTodayIncentives(incentivesResult.data.data);
+        }
 
-      // Load customers
-      const customersResult = await executeGetCustomers({ employee_id: emp.id });
-      if (customersResult?.data?.success) {
-        setCustomers(customersResult.data.data);
+        // Load customers
+        const customersResult = await executeGetCustomers({ employee_id: emp.id });
+        if (customersResult?.data?.success) {
+          setCustomers(customersResult.data.data);
+        }
       }
+    } catch (error) {
+      console.error('Error loading employee data:', error);
+      toast.error('فشل تحميل البيانات');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -145,7 +154,7 @@ export default function CallCenterDashboard() {
     }
   };
 
-  if (isLoadingEmployee) {
+  if (isLoading) {
     return <div className="p-8">جاري التحميل...</div>;
   }
 

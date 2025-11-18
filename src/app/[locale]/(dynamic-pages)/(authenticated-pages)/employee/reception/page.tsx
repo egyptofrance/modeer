@@ -7,7 +7,7 @@ import {
   getEmployeeDailyTotal,
 } from '@/app/actions/employee-actions';
 import {
-  registerCustomerVisit,
+  markCustomerAsVisited,
   getCustomerByCode,
 } from '@/app/actions/customer-actions';
 import { createDevice } from '@/app/actions/device-actions';
@@ -23,10 +23,11 @@ export default function ReceptionDashboard() {
   const [employee, setEmployee] = useState<any>(null);
   const [dailyTotal, setDailyTotal] = useState<any>(null);
   const [todayIncentives, setTodayIncentives] = useState<any[]>([]);
-  const [customerCode, setCustomerCode] = useState('');
-  const [currentCustomer, setCurrentCustomer] = useState<any>(null);
+  const [customer, setCustomer] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Device form state
+  // Form states
+  const [customerCode, setCustomerCode] = useState('');
   const [deviceForm, setDeviceForm] = useState({
     device_type: '',
     brand: '',
@@ -34,19 +35,17 @@ export default function ReceptionDashboard() {
     serial_number: '',
     problem_description: '',
     estimated_cost: '',
-    notes: '',
   });
 
   // Actions
-  const { execute: executeGetEmployee } = useAction(getEmployeeByUserId);
   const { execute: executeGetDailyTotal } = useAction(getEmployeeDailyTotal);
   const { execute: executeGetTodayIncentives } = useAction(
     getTodayIncentivesByEmployee
   );
-  const { execute: executeGetCustomer, isExecuting: isSearching } =
+  const { execute: executeGetCustomer, isExecuting: isSearchingCustomer } =
     useAction(getCustomerByCode);
-  const { execute: executeRegisterVisit, isExecuting: isRegistering } =
-    useAction(registerCustomerVisit);
+  const { execute: executeMarkVisited, isExecuting: isMarkingVisited } =
+    useAction(markCustomerAsVisited);
   const { execute: executeCreateDevice, isExecuting: isCreatingDevice } =
     useAction(createDevice);
 
@@ -55,54 +54,61 @@ export default function ReceptionDashboard() {
   }, []);
 
   const loadEmployeeData = async () => {
-    const result = await executeGetEmployee();
-    if (result?.data?.success) {
-      const emp = result.data.data;
-      setEmployee(emp);
+    try {
+      setIsLoading(true);
+      const empResult = await getEmployeeByUserId();
+      
+      if (empResult?.success && empResult?.data) {
+        const emp = empResult.data;
+        setEmployee(emp);
 
-      // Load daily total
-      const dailyResult = await executeGetDailyTotal({ employee_id: emp.id });
-      if (dailyResult?.data?.success) {
-        setDailyTotal(dailyResult.data.data);
-      }
+        // Load daily total
+        const dailyResult = await executeGetDailyTotal({ employee_id: emp.id });
+        if (dailyResult?.data?.success) {
+          setDailyTotal(dailyResult.data.data);
+        }
 
-      // Load today's incentives
-      const incentivesResult = await executeGetTodayIncentives({
-        employee_id: emp.id,
-      });
-      if (incentivesResult?.data?.success) {
-        setTodayIncentives(incentivesResult.data.data);
+        // Load today's incentives
+        const incentivesResult = await executeGetTodayIncentives({
+          employee_id: emp.id,
+        });
+        if (incentivesResult?.data?.success) {
+          setTodayIncentives(incentivesResult.data.data);
+        }
       }
+    } catch (error) {
+      console.error('Error loading employee data:', error);
+      toast.error('فشل تحميل البيانات');
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const handleSearchCustomer = async () => {
-    if (!customerCode.trim()) {
-      toast.error('الرجاء إدخال كود العميل');
-      return;
-    }
+  const handleSearchCustomer = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!customerCode.trim()) return;
 
     const result = await executeGetCustomer({ customer_code: customerCode });
     if (result?.data?.success) {
-      setCurrentCustomer(result.data.data);
+      setCustomer(result.data.data);
       toast.success('تم العثور على العميل');
     } else {
       toast.error('لم يتم العثور على العميل');
-      setCurrentCustomer(null);
+      setCustomer(null);
     }
   };
 
-  const handleRegisterVisit = async () => {
-    if (!employee || !currentCustomer) return;
+  const handleMarkAsVisited = async () => {
+    if (!customer || !employee) return;
 
-    const result = await executeRegisterVisit({
-      customer_code: currentCustomer.customer_code,
-      registered_by_employee_id: employee.id,
+    const result = await executeMarkVisited({
+      customer_id: customer.id,
+      employee_id: employee.id,
     });
 
     if (result?.data?.success) {
       toast.success('تم تسجيل حضور العميل بنجاح');
-      setCurrentCustomer(result.data.data);
+      setCustomer({ ...customer, has_visited: true });
       loadEmployeeData();
     } else {
       toast.error('فشل تسجيل حضور العميل');
@@ -111,22 +117,12 @@ export default function ReceptionDashboard() {
 
   const handleCreateDevice = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!currentCustomer) {
-      toast.error('الرجاء تحديد العميل أولاً');
-      return;
-    }
+    if (!customer) return;
 
     const result = await executeCreateDevice({
-      customer_id: currentCustomer.id,
-      device_type: deviceForm.device_type,
-      brand: deviceForm.brand,
-      model: deviceForm.model,
-      serial_number: deviceForm.serial_number,
-      problem_description: deviceForm.problem_description,
-      estimated_cost: deviceForm.estimated_cost
-        ? parseFloat(deviceForm.estimated_cost)
-        : undefined,
-      notes: deviceForm.notes,
+      customer_id: customer.id,
+      ...deviceForm,
+      estimated_cost: parseFloat(deviceForm.estimated_cost) || 0,
     });
 
     if (result?.data?.success) {
@@ -138,15 +134,18 @@ export default function ReceptionDashboard() {
         serial_number: '',
         problem_description: '',
         estimated_cost: '',
-        notes: '',
       });
     } else {
       toast.error('فشل تسجيل الجهاز');
     }
   };
 
-  if (!employee) {
+  if (isLoading) {
     return <div className="p-8">جاري التحميل...</div>;
+  }
+
+  if (!employee) {
+    return <div className="p-8">لم يتم العثور على بيانات الموظف</div>;
   }
 
   return (
@@ -242,80 +241,70 @@ export default function ReceptionDashboard() {
       {/* Search Customer */}
       <Card>
         <CardHeader>
-          <CardTitle>البحث عن العميل</CardTitle>
+          <CardTitle>البحث عن عميل</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex gap-4">
-            <div className="flex-1">
-              <Label htmlFor="customer_code">كود العميل</Label>
-              <Input
-                id="customer_code"
-                value={customerCode}
-                onChange={(e) => setCustomerCode(e.target.value)}
-                placeholder="مثال: 101-0001"
-                onKeyPress={(e) => {
-                  if (e.key === 'Enter') {
-                    handleSearchCustomer();
-                  }
-                }}
-              />
-            </div>
-            <div className="flex items-end">
-              <Button onClick={handleSearchCustomer} disabled={isSearching}>
-                {isSearching ? 'جاري البحث...' : 'بحث'}
-              </Button>
-            </div>
-          </div>
+          <form onSubmit={handleSearchCustomer} className="flex gap-4">
+            <Input
+              placeholder="أدخل كود العميل"
+              value={customerCode}
+              onChange={(e) => setCustomerCode(e.target.value)}
+              className="flex-1"
+            />
+            <Button type="submit" disabled={isSearchingCustomer}>
+              {isSearchingCustomer ? 'جاري البحث...' : 'بحث'}
+            </Button>
+          </form>
         </CardContent>
       </Card>
 
-      {/* Customer Info */}
-      {currentCustomer && (
+      {/* Customer Details */}
+      {customer && (
         <Card>
           <CardHeader>
-            <CardTitle>معلومات العميل</CardTitle>
+            <CardTitle>بيانات العميل</CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <p className="text-sm text-gray-500">الاسم</p>
-                  <p className="font-semibold">{currentCustomer.full_name}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500">رقم الهاتف</p>
-                  <p className="font-semibold">{currentCustomer.phone}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500">كود العميل</p>
-                  <p className="font-mono">{currentCustomer.customer_code}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500">الحالة</p>
-                  <p
-                    className={`font-semibold ${
-                      currentCustomer.has_visited
-                        ? 'text-green-600'
-                        : 'text-orange-600'
-                    }`}
-                  >
-                    {currentCustomer.has_visited ? 'تم التسجيل' : 'لم يتم التسجيل'}
-                  </p>
-                </div>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <p className="text-sm text-gray-500">الاسم</p>
+                <p className="font-semibold">{customer.full_name}</p>
               </div>
-
-              {!currentCustomer.has_visited && (
-                <Button onClick={handleRegisterVisit} disabled={isRegistering}>
-                  {isRegistering ? 'جاري التسجيل...' : 'تسجيل حضور العميل'}
-                </Button>
-              )}
+              <div>
+                <p className="text-sm text-gray-500">رقم الهاتف</p>
+                <p className="font-semibold">{customer.phone}</p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-500">البريد الإلكتروني</p>
+                <p className="font-semibold">{customer.email || '-'}</p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-500">حالة الحضور</p>
+                <p
+                  className={`font-semibold ${
+                    customer.has_visited ? 'text-green-600' : 'text-red-600'
+                  }`}
+                >
+                  {customer.has_visited ? 'حضر' : 'لم يحضر'}
+                </p>
+              </div>
             </div>
+
+            {!customer.has_visited && (
+              <Button
+                onClick={handleMarkAsVisited}
+                disabled={isMarkingVisited}
+                className="w-full"
+              >
+                {isMarkingVisited ? 'جاري التسجيل...' : 'تسجيل حضور العميل'}
+              </Button>
+            )}
           </CardContent>
         </Card>
       )}
 
-      {/* Register Device */}
-      {currentCustomer && currentCustomer.has_visited && (
+      {/* Device Registration Form */}
+      {customer && customer.has_visited && (
         <Card>
           <CardHeader>
             <CardTitle>تسجيل جهاز</CardTitle>
@@ -400,17 +389,6 @@ export default function ReceptionDashboard() {
                     })
                   }
                   required
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="notes">ملاحظات</Label>
-                <Textarea
-                  id="notes"
-                  value={deviceForm.notes}
-                  onChange={(e) =>
-                    setDeviceForm({ ...deviceForm, notes: e.target.value })
-                  }
                 />
               </div>
 
