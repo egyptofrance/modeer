@@ -1,7 +1,7 @@
 // @ts-nocheck
 'use server';
 
-import { createClient } from '@/utils/supabase/server';
+import { createClient } from '@/lib/supabase/server';
 import { authActionClient } from '@/lib/safe-action';
 import { z } from 'zod';
 
