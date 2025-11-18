@@ -56,32 +56,16 @@
 
 ---
 
-## المرحلة 4: نظام التوجيهات والاختبارات
-- [ ] إنشاء جدول guidelines (التوجيهات):
-  - [ ] title
-  - [ ] content
-  - [ ] created_by (admin_id)
-  - [ ] target_employee_types (array)
-- [ ] إنشاء جدول employee_guidelines (تعيين توجيهات):
-  - [ ] employee_id
-  - [ ] guideline_id
-  - [ ] read_status
-- [ ] إنشاء جدول tests (الاختبارات):
-  - [ ] title
-  - [ ] questions (jsonb)
-  - [ ] target_employee_types
-- [ ] إنشاء جدول employee_tests (نتائج الاختبارات):
-  - [ ] employee_id
-  - [ ] test_id
-  - [ ] score (%)
-  - [ ] completed_at
-- [ ] إنشاء server actions
-- [ ] إنشاء صفحات الأدمن
-- [ ] إنشاء صفحات الموظف
-- [ ] إنشاء migration
-- [ ] تطبيق migration على Supabase
+## المرحلة 4: نظام التوجيهات والاختبارات ✅ (مكتملة)
+- [x] إنشاء جدول employee_orientations
+- [x] إنشاء جدول employee_tests
+- [x] حساب تلقائي للنسبة المئوية وحالة النجاح
+- [x] 5 دوال للتقارير والإحصائيات
+- [x] Row Level Security policies
+- [x] إنشاء migration
+- [x] تطبيق migration على Supabase
 - [ ] دفع التغييرات إلى GitHub
-- [ ] ✅ اختبار النشر على Vercel
+- [ ] اختبار النشر على Vercel
 
 ---
 
