@@ -138,7 +138,6 @@ export default function ReceptionDashboard() {
       const result = await createDevice({
         ...deviceForm,
         customer_id: currentCustomer.id,
-        received_by: employee.id,
         estimated_cost: parseFloat(deviceForm.estimated_cost) || 0,
       });
 
