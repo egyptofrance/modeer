@@ -43,7 +43,7 @@ export const createCustomer = authActionClient
     const customerCode = `${parsedInput.assigned_by_employee_id}-${timestamp}-${random}`;
 
     // Create customer
-    const { data, error } = await supabase
+    const { data, error } = (await supabase
       .from('customers')
       .insert({
         customer_code: customerCode,
@@ -54,8 +54,8 @@ export const createCustomer = authActionClient
         assigned_by_employee_id: parsedInput.assigned_by_employee_id,
         notes: parsedInput.notes,
       })
-      .select('*, assigned_by_employee:employees!assigned_by_employee_id(*)')
-      .single();
+      .select('*')
+      .single()) as any;
 
     if (error) {
       throw new Error('Failed to create customer: ' + error.message);
