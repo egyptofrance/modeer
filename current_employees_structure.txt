@@ -1,0 +1,14 @@
+Current employees table structure from Supabase:
+
+1. id - uuid - NO - gen_random_uuid()
+2. user_id - uuid - YES - NULL
+3. employee_type_id - uuid - NO - NULL
+4. employee_code - text - NO - NULL
+5. full_name - text - NO - NULL
+6. email - text - NO - NULL
+7. phone - text - YES - NULL
+8. base_salary - numeric - YES - 0
+9. daily_salary - numeric - YES - 0
+
+The table EXISTS and has more columns than initially thought.
+Need to scroll down to see all columns before creating migration.
