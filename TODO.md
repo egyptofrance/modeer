@@ -123,6 +123,8 @@
 ### ملفات التوثيق
 - [x] EMPLOYEE_SYSTEM_EXTENDED_DOCUMENTATION.md (توثيق شامل 69 KB)
 - [x] DEVELOPER_GUIDE.md (دليل المطور)
+- [x] DELIVERY_README.md (ملف التسليم)
+- [x] PROJECT_SUMMARY.md (ملخص المشروع)
 - [x] ALL_MIGRATIONS_COMBINED.sql (1610 سطر)
 - [x] TODO.md (محدث)
 
