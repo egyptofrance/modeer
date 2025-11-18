@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useAction } from 'next-safe-action/hooks';
 import {
   getEmployeeByUserId,
   getEmployeeStatistics,
@@ -29,6 +28,9 @@ export default function CallCenterDashboard() {
   const [customers, setCustomers] = useState<any[]>([]);
   const [isCheckedIn, setIsCheckedIn] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [isCheckingIn, setIsCheckingIn] = useState(false);
+  const [isCheckingOut, setIsCheckingOut] = useState(false);
+  const [isCreatingCustomer, setIsCreatingCustomer] = useState(false);
 
   // Form state
   const [customerForm, setCustomerForm] = useState({
@@ -39,20 +41,6 @@ export default function CallCenterDashboard() {
     notes: '',
   });
 
-  // Actions
-  const { execute: executeGetStats } = useAction(getEmployeeStatistics);
-  const { execute: executeGetDailyTotal } = useAction(getEmployeeDailyTotal);
-  const { execute: executeGetTodayIncentives } = useAction(
-    getTodayIncentivesByEmployee
-  );
-  const { execute: executeGetCustomers } = useAction(getCustomersByEmployee);
-  const { execute: executeCheckIn, isExecuting: isCheckingIn } =
-    useAction(checkInEmployee);
-  const { execute: executeCheckOut, isExecuting: isCheckingOut } =
-    useAction(checkOutEmployee);
-  const { execute: executeCreateCustomer, isExecuting: isCreatingCustomer } =
-    useAction(createCustomer);
-
   // Load employee data
   useEffect(() => {
     loadEmployeeData();
@@ -61,7 +49,6 @@ export default function CallCenterDashboard() {
   const loadEmployeeData = async () => {
     try {
       setIsLoading(true);
-      // استدعاء getEmployeeByUserId مباشرة
       const empResult = await getEmployeeByUserId();
       
       if (empResult?.data) {
@@ -69,34 +56,40 @@ export default function CallCenterDashboard() {
         setEmployee(emp);
 
         // Load statistics
-        const statsResult = await executeGetStats({ employee_id: emp.id });
-        if (statsResult?.data?.success) {
-          setStatistics(statsResult.data.data);
+        const statsResult = await getEmployeeStatistics({ employee_id: emp.id });
+        if (statsResult?.data) {
+          setStatistics(statsResult.data);
         }
 
         // Load daily total
-        const dailyResult = await executeGetDailyTotal({ employee_id: emp.id });
-        if (dailyResult?.data?.success) {
-          setDailyTotal(dailyResult.data.data);
+        const dailyResult = await getEmployeeDailyTotal({ employee_id: emp.id });
+        if (dailyResult?.data) {
+          setDailyTotal(dailyResult.data);
         }
 
         // Load today's incentives
-        const incentivesResult = await executeGetTodayIncentives({
+        const incentivesResult = await getTodayIncentivesByEmployee({
           employee_id: emp.id,
         });
-        if (incentivesResult?.data?.success) {
-          setTodayIncentives(incentivesResult.data.data);
+        if (incentivesResult?.data) {
+          setTodayIncentives(incentivesResult.data || []);
         }
 
         // Load customers
-        const customersResult = await executeGetCustomers({ employee_id: emp.id });
-        if (customersResult?.data?.success) {
-          setCustomers(customersResult.data.data);
+        const customersResult = await getCustomersByEmployee({
+          employee_id: emp.id,
+        });
+        if (customersResult?.data) {
+          setCustomers(customersResult.data || []);
         }
+
+        // Check if already checked in today
+        // This would need to be implemented in employee-actions
+        setIsCheckedIn(false);
       }
     } catch (error) {
       console.error('Error loading employee data:', error);
-      toast.error('فشل تحميل البيانات');
+      toast.error('فشل تحميل بيانات الموظف');
     } finally {
       setIsLoading(false);
     }
@@ -104,27 +97,45 @@ export default function CallCenterDashboard() {
 
   const handleCheckIn = async () => {
     if (!employee) return;
-
-    const result = await executeCheckIn({ employee_id: employee.id });
-    if (result?.data?.success) {
-      toast.success('تم تسجيل الحضور بنجاح');
-      setIsCheckedIn(true);
-      loadEmployeeData();
-    } else {
-      toast.error('فشل تسجيل الحضور');
+    
+    try {
+      setIsCheckingIn(true);
+      const result = await checkInEmployee({ employee_id: employee.id });
+      
+      if (result?.data) {
+        setIsCheckedIn(true);
+        toast.success('تم تسجيل الحضور بنجاح');
+        loadEmployeeData(); // Reload to get updated incentives
+      } else {
+        toast.error('فشل تسجيل الحضور');
+      }
+    } catch (error) {
+      console.error('Error checking in:', error);
+      toast.error('حدث خطأ أثناء تسجيل الحضور');
+    } finally {
+      setIsCheckingIn(false);
     }
   };
 
   const handleCheckOut = async () => {
     if (!employee) return;
-
-    const result = await executeCheckOut({ employee_id: employee.id });
-    if (result?.data?.success) {
-      toast.success('تم تسجيل الانصراف بنجاح');
-      setIsCheckedIn(false);
-      loadEmployeeData();
-    } else {
-      toast.error('فشل تسجيل الانصراف');
+    
+    try {
+      setIsCheckingOut(true);
+      const result = await checkOutEmployee({ employee_id: employee.id });
+      
+      if (result?.data) {
+        setIsCheckedIn(false);
+        toast.success('تم تسجيل الانصراف بنجاح');
+        loadEmployeeData(); // Reload to get updated incentives
+      } else {
+        toast.error('فشل تسجيل الانصراف');
+      }
+    } catch (error) {
+      console.error('Error checking out:', error);
+      toast.error('حدث خطأ أثناء تسجيل الانصراف');
+    } finally {
+      setIsCheckingOut(false);
     }
   };
 
@@ -132,185 +143,139 @@ export default function CallCenterDashboard() {
     e.preventDefault();
     if (!employee) return;
 
-    const result = await executeCreateCustomer({
-      ...customerForm,
-      assigned_by_employee_id: employee.id,
-    });
-
-    if (result?.data?.success) {
-      toast.success(
-        `تم تسجيل العميل بنجاح. الكود: ${result.data.data.customer_code}`
-      );
-      setCustomerForm({
-        full_name: '',
-        phone: '',
-        email: '',
-        address: '',
-        notes: '',
+    try {
+      setIsCreatingCustomer(true);
+      const result = await createCustomer({
+        ...customerForm,
+        employee_id: employee.id,
       });
-      loadEmployeeData();
-    } else {
-      toast.error('فشل تسجيل العميل');
+
+      if (result?.data) {
+        toast.success(`تم تسجيل العميل بنجاح. كود العميل: ${result.data.customer_code}`);
+        setCustomerForm({
+          full_name: '',
+          phone: '',
+          email: '',
+          address: '',
+          notes: '',
+        });
+        loadEmployeeData(); // Reload to get updated customers and incentives
+      } else {
+        toast.error('فشل تسجيل العميل');
+      }
+    } catch (error) {
+      console.error('Error creating customer:', error);
+      toast.error('حدث خطأ أثناء تسجيل العميل');
+    } finally {
+      setIsCreatingCustomer(false);
     }
   };
 
   if (isLoading) {
-    return <div className="p-8">جاري التحميل...</div>;
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-lg">جاري التحميل...</div>
+      </div>
+    );
   }
 
   if (!employee) {
-    return <div className="p-8">لم يتم العثور على بيانات الموظف</div>;
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-lg text-red-500">لم يتم العثور على بيانات الموظف</div>
+      </div>
+    );
   }
 
   return (
     <div className="container mx-auto p-6 space-y-6" dir="rtl">
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold">لوحة موظف الكول سنتر</h1>
-        <div className="flex gap-2">
-          {!isCheckedIn ? (
-            <Button onClick={handleCheckIn} disabled={isCheckingIn}>
-              تسجيل الحضور
-            </Button>
-          ) : (
-            <Button onClick={handleCheckOut} disabled={isCheckingOut}>
-              تسجيل الانصراف
-            </Button>
-          )}
-        </div>
-      </div>
+      <h1 className="text-3xl font-bold">لوحة موظف الكول سنتر</h1>
 
-      {/* Employee Info */}
+      {/* Employee Info & Check In/Out */}
       <Card>
         <CardHeader>
           <CardTitle>معلومات الموظف</CardTitle>
         </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <p className="text-sm text-gray-500">الاسم</p>
-              <p className="font-semibold">{employee.full_name}</p>
-            </div>
-            <div>
-              <p className="text-sm text-gray-500">كود الموظف</p>
-              <p className="font-semibold">{employee.employee_code}</p>
-            </div>
+        <CardContent className="space-y-4">
+          <div>
+            <p className="text-lg">
+              <strong>الاسم:</strong> {employee.full_name}
+            </p>
+            <p className="text-lg">
+              <strong>كود الموظف:</strong> {employee.employee_code}
+            </p>
+          </div>
+          <div className="flex gap-4">
+            {!isCheckedIn ? (
+              <Button onClick={handleCheckIn} disabled={isCheckingIn}>
+                {isCheckingIn ? 'جاري التسجيل...' : 'تسجيل حضور'}
+              </Button>
+            ) : (
+              <Button onClick={handleCheckOut} disabled={isCheckingOut} variant="destructive">
+                {isCheckingOut ? 'جاري التسجيل...' : 'تسجيل انصراف'}
+              </Button>
+            )}
           </div>
         </CardContent>
       </Card>
 
-      {/* Daily Total */}
-      {dailyTotal && (
-        <div className="grid grid-cols-3 gap-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>الراتب اليومي</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-3xl font-bold text-blue-600">
-                {dailyTotal.daily_salary} جنيه
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>حوافز اليوم</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-3xl font-bold text-green-600">
-                {dailyTotal.daily_incentives} جنيه
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>الإجمالي اليومي</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-3xl font-bold text-purple-600">
-                {dailyTotal.total} جنيه
-              </p>
-            </CardContent>
-          </Card>
-        </div>
-      )}
-
       {/* Statistics */}
-      {statistics && (
-        <div className="grid grid-cols-4 gap-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>إجمالي العملاء</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-2xl font-bold">{statistics.total_customers}</p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>العملاء الذين حضروا</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-2xl font-bold">
-                {statistics.visited_customers}
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>نسبة الحضور</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-2xl font-bold">
-                {statistics.visit_percentage.toFixed(1)}%
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>الحوافز غير المدفوعة</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-2xl font-bold">
-                {statistics.unpaid_incentives} جنيه
-              </p>
-            </CardContent>
-          </Card>
-        </div>
-      )}
-
-      {/* Today's Incentives */}
-      {todayIncentives.length > 0 && (
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card>
           <CardHeader>
-            <CardTitle>حوافز اليوم</CardTitle>
+            <CardTitle>إجمالي العملاء</CardTitle>
           </CardHeader>
           <CardContent>
+            <p className="text-4xl font-bold">{statistics?.total_customers || 0}</p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>العملاء الذين حضروا</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-4xl font-bold">{statistics?.visited_customers || 0}</p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>الراتب اليومي</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-4xl font-bold text-green-600">
+              {dailyTotal?.total || 0} جنيه
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Today's Incentives */}
+      <Card>
+        <CardHeader>
+          <CardTitle>حوافز اليوم</CardTitle>
+        </CardHeader>
+        <CardContent>
+          {todayIncentives.length > 0 ? (
             <div className="space-y-2">
-              {todayIncentives.map((incentive) => (
+              {todayIncentives.map((incentive: any, index: number) => (
                 <div
-                  key={incentive.id}
-                  className="flex justify-between items-center p-3 bg-gray-50 rounded"
+                  key={index}
+                  className="flex justify-between items-center p-3 bg-gray-100 rounded"
                 >
-                  <div>
-                    <p className="font-semibold">{incentive.description}</p>
-                    <p className="text-sm text-gray-500">
-                      {incentive.incentive_type}
-                    </p>
-                  </div>
-                  <p className="text-lg font-bold text-green-600">
+                  <span>{incentive.incentive_type}</span>
+                  <span className="font-bold text-green-600">
                     +{incentive.amount} جنيه
-                  </p>
+                  </span>
                 </div>
               ))}
             </div>
-          </CardContent>
-        </Card>
-      )}
+          ) : (
+            <p className="text-gray-500">لا توجد حوافز اليوم</p>
+          )}
+        </CardContent>
+      </Card>
 
       {/* Create Customer Form */}
       <Card>
@@ -319,53 +284,52 @@ export default function CallCenterDashboard() {
         </CardHeader>
         <CardContent>
           <form onSubmit={handleCreateCustomer} className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="full_name">اسم العميل *</Label>
-                <Input
-                  id="full_name"
-                  value={customerForm.full_name}
-                  onChange={(e) =>
-                    setCustomerForm({ ...customerForm, full_name: e.target.value })
-                  }
-                  required
-                />
-              </div>
+            <div>
+              <Label htmlFor="full_name">الاسم الكامل *</Label>
+              <Input
+                id="full_name"
+                value={customerForm.full_name}
+                onChange={(e) =>
+                  setCustomerForm({ ...customerForm, full_name: e.target.value })
+                }
+                required
+              />
+            </div>
 
-              <div>
-                <Label htmlFor="phone">رقم الهاتف *</Label>
-                <Input
-                  id="phone"
-                  value={customerForm.phone}
-                  onChange={(e) =>
-                    setCustomerForm({ ...customerForm, phone: e.target.value })
-                  }
-                  required
-                />
-              </div>
+            <div>
+              <Label htmlFor="phone">رقم الهاتف *</Label>
+              <Input
+                id="phone"
+                type="tel"
+                value={customerForm.phone}
+                onChange={(e) =>
+                  setCustomerForm({ ...customerForm, phone: e.target.value })
+                }
+                required
+              />
+            </div>
 
-              <div>
-                <Label htmlFor="email">البريد الإلكتروني</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  value={customerForm.email}
-                  onChange={(e) =>
-                    setCustomerForm({ ...customerForm, email: e.target.value })
-                  }
-                />
-              </div>
+            <div>
+              <Label htmlFor="email">البريد الإلكتروني</Label>
+              <Input
+                id="email"
+                type="email"
+                value={customerForm.email}
+                onChange={(e) =>
+                  setCustomerForm({ ...customerForm, email: e.target.value })
+                }
+              />
+            </div>
 
-              <div>
-                <Label htmlFor="address">العنوان</Label>
-                <Input
-                  id="address"
-                  value={customerForm.address}
-                  onChange={(e) =>
-                    setCustomerForm({ ...customerForm, address: e.target.value })
-                  }
-                />
-              </div>
+            <div>
+              <Label htmlFor="address">العنوان</Label>
+              <Textarea
+                id="address"
+                value={customerForm.address}
+                onChange={(e) =>
+                  setCustomerForm({ ...customerForm, address: e.target.value })
+                }
+              />
             </div>
 
             <div>
@@ -386,35 +350,39 @@ export default function CallCenterDashboard() {
         </CardContent>
       </Card>
 
-      {/* Recent Customers */}
+      {/* Customers List */}
       <Card>
         <CardHeader>
-          <CardTitle>العملاء المسجلين ({customers.length})</CardTitle>
+          <CardTitle>عملائي ({customers.length})</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="space-y-2">
-            {customers.slice(0, 10).map((customer) => (
-              <div
-                key={customer.id}
-                className="flex justify-between items-center p-3 bg-gray-50 rounded"
-              >
-                <div>
-                  <p className="font-semibold">{customer.full_name}</p>
-                  <p className="text-sm text-gray-500">{customer.phone}</p>
+          {customers.length > 0 ? (
+            <div className="space-y-2">
+              {customers.map((customer: any) => (
+                <div
+                  key={customer.id}
+                  className="flex justify-between items-center p-3 bg-gray-100 rounded"
+                >
+                  <div>
+                    <p className="font-bold">{customer.full_name}</p>
+                    <p className="text-sm text-gray-600">{customer.phone}</p>
+                    <p className="text-sm text-gray-600">
+                      كود: {customer.customer_code}
+                    </p>
+                  </div>
+                  <div>
+                    {customer.has_visited ? (
+                      <span className="text-green-600 font-bold">✓ حضر</span>
+                    ) : (
+                      <span className="text-gray-500">لم يحضر بعد</span>
+                    )}
+                  </div>
                 </div>
-                <div className="text-left">
-                  <p className="font-mono text-sm">{customer.customer_code}</p>
-                  <p
-                    className={`text-sm ${
-                      customer.has_visited ? 'text-green-600' : 'text-gray-500'
-                    }`}
-                  >
-                    {customer.has_visited ? '✓ حضر' : 'لم يحضر'}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-gray-500">لا يوجد عملاء</p>
+          )}
         </CardContent>
       </Card>
     </div>
