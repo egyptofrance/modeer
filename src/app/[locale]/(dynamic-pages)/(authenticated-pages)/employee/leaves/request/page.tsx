@@ -45,7 +45,7 @@ export default function LeaveRequestPage() {
 
   const loadEmployeeData = async () => {
     try {
-      const employeeResult = await getEmployeeData('');
+      const employeeResult = await getEmployeeData();
       if (employeeResult.data) {
         setCurrentEmployee(employeeResult.data as any);
       }
