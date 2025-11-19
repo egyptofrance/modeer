@@ -83,10 +83,12 @@ export const createAdminNotification = async ({
   const { data: notification, error } = await supabaseAdminClient
     .from("user_notifications")
     .insert(
-      adminUserIdsToNotify.map((userId) => ({
-        user_id: userId,
-        payload,
-      })),
+      adminUserIdsToNotify
+        .filter((userId): userId is string => userId !== null)
+        .map((userId) => ({
+          user_id: userId,
+          payload,
+        })),
     );
   if (error) throw error;
   return notification;
