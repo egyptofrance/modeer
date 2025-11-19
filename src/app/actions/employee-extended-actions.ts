@@ -469,3 +469,54 @@ export async function getEvaluationStats(employeeId: string) {
   }
   return { data, error: null };
 }
+
+// Get current logged-in employee data
+export async function getEmployeeData() {
+  const supabase = await createSupabaseUserServerActionClient();
+  
+  // Get current user
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
+
+  if (userError || !user) {
+    return { data: null, error: userError || new Error('User not authenticated') };
+  }
+
+  // Get employee data
+  const { data, error } = await supabase
+    .from('employees')
+    .select(
+      `
+      id, 
+      full_name, 
+      email, 
+      phone, 
+      employee_code, 
+      base_salary, 
+      daily_salary, 
+      hire_date, 
+      date_of_birth, 
+      qualification_level, 
+      qualification_name, 
+      address, 
+      gender, 
+      initial_test_score,
+      employee_types (
+        id,
+        name,
+        code_prefix
+      )
+      `
+    )
+    .eq('user_id', user.id)
+    .single();
+
+  if (error) {
+    console.error('Error getting employee data:', error);
+    return { data: null, error };
+  }
+  
+  return { data, error: null };
+}
