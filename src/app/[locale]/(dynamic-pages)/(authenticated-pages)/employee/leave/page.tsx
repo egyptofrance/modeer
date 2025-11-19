@@ -47,6 +47,7 @@ export default function EmployeeLeavePage() {
     start_date: '',
     end_date: '',
     reason: '',
+    substitute_employee_name: '',
     notes: '',
   });
 
@@ -114,6 +115,7 @@ export default function EmployeeLeavePage() {
           start_date: '',
           end_date: '',
           reason: '',
+          substitute_employee_name: '',
           notes: '',
         });
         setShowForm(false);
@@ -287,6 +289,20 @@ export default function EmployeeLeavePage() {
                     setFormData({ ...formData, reason: e.target.value })
                   }
                   placeholder="اكتب سبب طلب الإجازة..."
+                  required
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="substitute_employee_name">اسم الموظف البديل *</Label>
+                <Input
+                  id="substitute_employee_name"
+                  type="text"
+                  value={formData.substitute_employee_name}
+                  onChange={(e) =>
+                    setFormData({ ...formData, substitute_employee_name: e.target.value })
+                  }
+                  placeholder="اكتب اسم الموظف البديل"
                   required
                 />
               </div>
