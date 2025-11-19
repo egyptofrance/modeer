@@ -14,7 +14,7 @@ import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 import { Upload, FileCheck, FileX, Eye } from 'lucide-react';
-import { createBrowserClient } from '@/supabase-clients/client';
+import { supabaseUserClientComponent } from '@/supabase-clients/user/supabaseUserClientComponent';
 
 const DOCUMENTS = [
   { key: 'id_card_front', label: 'صورة البطاقة (وجه)', required: true },
@@ -86,7 +86,7 @@ export default function EmployeeDocumentsPage() {
       setUploadingDoc(docKey);
 
       // Upload to Supabase Storage
-      const supabase = createBrowserClient();
+      const supabase = supabaseUserClientComponent;
       const fileExt = file.name.split('.').pop();
       const fileName = `${employee.id}/${docKey}_${Date.now()}.${fileExt}`;
 
@@ -121,7 +121,7 @@ export default function EmployeeDocumentsPage() {
 
   const getDocumentUrl = async (path: string) => {
     if (!path) return null;
-    const supabase = createBrowserClient();
+    const supabase = supabaseUserClientComponent;
     const { data } = supabase.storage
       .from('employee-documents')
       .getPublicUrl(path);

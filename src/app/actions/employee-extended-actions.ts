@@ -1,11 +1,11 @@
 'use server';
 
-import { createServerClient } from '@/supabase-clients/server';
+import { createSupabaseUserServerActionClient } from '@/supabase-clients/user/createSupabaseUserServerActionClient';
 
 // ==================== بيانات الموظف ====================
 
 export async function getEmployeeDailySalary(employeeId: string) {
-  const supabase = await createServerClient();
+  const supabase = createSupabaseUserServerActionClient();
   const { data, error } = await supabase.rpc('calculate_daily_salary', {
     p_employee_id: employeeId,
   });
@@ -17,7 +17,7 @@ export async function getEmployeeDailySalary(employeeId: string) {
 }
 
 export async function checkLeaveEligibility(employeeId: string) {
-  const supabase = await createServerClient();
+  const supabase = createSupabaseUserServerActionClient();
   const { data, error } = await supabase.rpc('is_eligible_for_leave', {
     p_employee_id: employeeId,
   });
@@ -29,7 +29,7 @@ export async function checkLeaveEligibility(employeeId: string) {
 }
 
 export async function getEmployeeExtendedData(employeeId: string) {
-  const supabase = await createServerClient();
+  const supabase = createSupabaseUserServerActionClient();
   const { data, error } = await supabase
     .from('employees')
     .select(
@@ -48,7 +48,7 @@ export async function getEmployeeExtendedData(employeeId: string) {
 // ==================== المستندات ====================
 
 export async function getEmployeeDocuments(employeeId: string) {
-  const supabase = await createServerClient();
+  const supabase = createSupabaseUserServerActionClient();
   const { data, error } = await supabase
     .from('employee_documents')
     .select('*')
@@ -67,7 +67,7 @@ export async function uploadDocument(params: {
   documentType: string;
   filePath: string;
 }) {
-  const supabase = await createServerClient();
+  const supabase = createSupabaseUserServerActionClient();
 
   // Check if document record exists
   const { data: existing } = await supabase
@@ -112,7 +112,7 @@ export async function uploadDocument(params: {
 }
 
 export async function checkDocumentsComplete(employeeId: string) {
-  const supabase = await createServerClient();
+  const supabase = createSupabaseUserServerActionClient();
   const { data, error } = await supabase.rpc('check_documents_complete', {
     p_employee_id: employeeId,
   });
@@ -127,7 +127,7 @@ export async function checkDocumentsComplete(employeeId: string) {
 // ==================== الحوافز المقررة ====================
 
 export async function getEmployeeIncentiveRules(employeeId: string) {
-  const supabase = await createServerClient();
+  const supabase = createSupabaseUserServerActionClient();
 
   // Get employee type
   const { data: employee } = await supabase
@@ -156,7 +156,7 @@ export async function getEmployeeIncentiveRules(employeeId: string) {
 }
 
 export async function getTotalFixedIncentives(employeeId: string) {
-  const supabase = await createServerClient();
+  const supabase = createSupabaseUserServerActionClient();
   const { data, error } = await supabase.rpc('get_employee_total_incentives', {
     p_employee_id: employeeId,
   });
@@ -171,7 +171,7 @@ export async function getTotalFixedIncentives(employeeId: string) {
 // ==================== التوجيهات ====================
 
 export async function getEmployeeOrientations(employeeId: string) {
-  const supabase = await createServerClient();
+  const supabase = createSupabaseUserServerActionClient();
   const { data, error } = await supabase
     .from('employee_orientations')
     .select('*')
@@ -186,7 +186,7 @@ export async function getEmployeeOrientations(employeeId: string) {
 }
 
 export async function getCompletedOrientationsCount(employeeId: string) {
-  const supabase = await createServerClient();
+  const supabase = createSupabaseUserServerActionClient();
   const { data, error } = await supabase.rpc(
     'get_employee_completed_orientations_count',
     { p_employee_id: employeeId }
@@ -202,7 +202,7 @@ export async function getCompletedOrientationsCount(employeeId: string) {
 // ==================== الاختبارات ====================
 
 export async function getEmployeeTests(employeeId: string) {
-  const supabase = await createServerClient();
+  const supabase = createSupabaseUserServerActionClient();
   const { data, error } = await supabase
     .from('employee_tests')
     .select('*')
@@ -217,7 +217,7 @@ export async function getEmployeeTests(employeeId: string) {
 }
 
 export async function getAverageTestScore(employeeId: string) {
-  const supabase = await createServerClient();
+  const supabase = createSupabaseUserServerActionClient();
   const { data, error } = await supabase.rpc(
     'get_employee_average_test_score',
     { p_employee_id: employeeId }
@@ -231,7 +231,7 @@ export async function getAverageTestScore(employeeId: string) {
 }
 
 export async function getTrainingReport(employeeId: string) {
-  const supabase = await createServerClient();
+  const supabase = createSupabaseUserServerActionClient();
   const { data, error } = await supabase.rpc('get_employee_training_report', {
     p_employee_id: employeeId,
   });
@@ -252,7 +252,7 @@ export async function submitTestAnswers(params: {
   test_date: string;
   answers: any;
 }) {
-  const supabase = await createServerClient();
+  const supabase = createSupabaseUserServerActionClient();
   const { data, error } = await supabase
     .from('employee_tests')
     .insert({
@@ -272,7 +272,7 @@ export async function submitTestAnswers(params: {
 // ==================== العقوبات ====================
 
 export async function getEmployeePenalties(employeeId: string) {
-  const supabase = await createServerClient();
+  const supabase = createSupabaseUserServerActionClient();
   const { data, error } = await supabase
     .from('employee_penalties')
     .select('*')
@@ -290,7 +290,7 @@ export async function addPenaltyResponse(params: {
   penaltyId: string;
   response: string;
 }) {
-  const supabase = await createServerClient();
+  const supabase = createSupabaseUserServerActionClient();
   const { data, error } = await supabase
     .from('employee_penalties')
     .update({ employee_response: params.response })
@@ -306,7 +306,7 @@ export async function addPenaltyResponse(params: {
 }
 
 export async function getPenaltiesReport(employeeId: string) {
-  const supabase = await createServerClient();
+  const supabase = createSupabaseUserServerActionClient();
   const { data, error } = await supabase.rpc('get_employee_penalties_report', {
     p_employee_id: employeeId,
   });
@@ -321,7 +321,7 @@ export async function getPenaltiesReport(employeeId: string) {
 // ==================== الإجازات ====================
 
 export async function getLeaveBalance(employeeId: string) {
-  const supabase = await createServerClient();
+  const supabase = createSupabaseUserServerActionClient();
   const { data, error } = await supabase.rpc('get_employee_leave_balance', {
     p_employee_id: employeeId,
   });
@@ -334,7 +334,7 @@ export async function getLeaveBalance(employeeId: string) {
 }
 
 export async function getLeaveRequests(employeeId: string) {
-  const supabase = await createServerClient();
+  const supabase = createSupabaseUserServerActionClient();
   const { data, error } = await supabase
     .from('leave_requests')
     .select('*')
@@ -356,7 +356,7 @@ export async function createLeaveRequest(params: {
   reason: string;
   notes?: string;
 }) {
-  const supabase = await createServerClient();
+  const supabase = createSupabaseUserServerActionClient();
 
   // Check eligibility
   const eligibilityResult = await checkLeaveEligibility(params.employee_id);
@@ -398,7 +398,7 @@ export async function createLeaveRequest(params: {
 }
 
 export async function getLeaveStats(employeeId: string) {
-  const supabase = await createServerClient();
+  const supabase = createSupabaseUserServerActionClient();
   const { data, error } = await supabase.rpc('get_employee_leave_stats', {
     p_employee_id: employeeId,
   });
@@ -413,7 +413,7 @@ export async function getLeaveStats(employeeId: string) {
 // ==================== التقييمات ====================
 
 export async function getEmployeeEvaluations(employeeId: string) {
-  const supabase = await createServerClient();
+  const supabase = createSupabaseUserServerActionClient();
   const { data, error } = await supabase
     .from('employee_evaluations')
     .select('*')
@@ -430,7 +430,7 @@ export async function getEmployeeEvaluations(employeeId: string) {
 }
 
 export async function getLatestEvaluation(employeeId: string) {
-  const supabase = await createServerClient();
+  const supabase = createSupabaseUserServerActionClient();
   const { data, error } = await supabase.rpc('get_employee_latest_evaluation', {
     p_employee_id: employeeId,
   });
@@ -443,7 +443,7 @@ export async function getLatestEvaluation(employeeId: string) {
 }
 
 export async function getAverageEvaluation(employeeId: string) {
-  const supabase = await createServerClient();
+  const supabase = createSupabaseUserServerActionClient();
   const { data, error } = await supabase.rpc(
     'get_employee_average_evaluation',
     { p_employee_id: employeeId }
@@ -457,7 +457,7 @@ export async function getAverageEvaluation(employeeId: string) {
 }
 
 export async function getEvaluationStats(employeeId: string) {
-  const supabase = await createServerClient();
+  const supabase = createSupabaseUserServerActionClient();
   const { data, error } = await supabase.rpc('get_employee_evaluation_stats', {
     p_employee_id: employeeId,
   });
