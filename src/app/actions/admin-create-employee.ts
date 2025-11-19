@@ -173,6 +173,12 @@ export async function updateEmployeeProfile(params: {
   qualification_name?: string;
   address?: string;
   gender?: string;
+  personal_phone?: string;
+  relative_name?: string;
+  relative_phone?: string;
+  relative_relation?: string;
+  company_phone?: string;
+  profile_photo_url?: string;
 }) {
   try {
     const { employee_id, ...updateData } = params;
