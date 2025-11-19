@@ -65,8 +65,8 @@ export default function EmployeeLeavePage() {
 
         // Check eligibility
         const eligibleResult = await checkLeaveEligibility(emp.id);
-        if (eligibleResult?.data !== null) {
-          setIsEligible(eligibleResult.data);
+        if (eligibleResult?.data !== null && eligibleResult?.data !== undefined) {
+          setIsEligible(eligibleResult.data as boolean);
         }
 
         // Load balance

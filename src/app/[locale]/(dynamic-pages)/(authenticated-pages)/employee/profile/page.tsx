@@ -37,14 +37,14 @@ export default function EmployeeProfilePage() {
 
         // Load daily salary
         const salaryResult = await getEmployeeDailySalary(emp.id);
-        if (salaryResult?.data) {
-          setDailySalary(salaryResult.data);
+        if (salaryResult?.data !== null && salaryResult?.data !== undefined) {
+          setDailySalary(salaryResult.data as number);
         }
 
         // Load incentives
         const incentivesResult = await getTotalFixedIncentives(emp.id);
-        if (incentivesResult?.data) {
-          setMonthlyIncentives(incentivesResult.data);
+        if (incentivesResult?.data !== null && incentivesResult?.data !== undefined) {
+          setMonthlyIncentives(incentivesResult.data as number);
         }
       }
     } catch (error) {

@@ -61,8 +61,8 @@ export default function EmployeeTrainingPage() {
 
         // Load average score
         const avgResult = await getAverageTestScore(emp.id);
-        if (avgResult?.data !== null) {
-          setAverageScore(avgResult.data);
+        if (avgResult?.data !== null && avgResult?.data !== undefined) {
+          setAverageScore(avgResult.data as number);
         }
       }
     } catch (error) {
