@@ -32,14 +32,19 @@ export default function VehicleAlertsPage() {
 
   const loadAlerts = async () => {
     try {
-      const queryBuilder = supabaseAdminClient
+      // استخدام type assertion لتجنب مشكلة TypeScript
+      const client = supabaseAdminClient as any;
+      
+      let query = client
         .from("vehicle_alerts")
         .select("*, vehicles(vehicle_number)")
         .order("created_at", { ascending: false });
 
-      const { data, error } = filter === "unread" 
-        ? await queryBuilder.eq("is_read", false)
-        : await queryBuilder;
+      if (filter === "unread") {
+        query = query.eq("is_read", false);
+      }
+
+      const { data, error } = await query;
 
       if (error) throw error;
       setAlerts(data || []);
@@ -53,7 +58,7 @@ export default function VehicleAlertsPage() {
 
   const markAsRead = async (alertId: string) => {
     try {
-      const { error } = await supabaseAdminClient
+      const { error } = await (supabaseAdminClient as any)
         .from("vehicle_alerts")
         .update({ is_read: true })
         .eq("id", alertId);
@@ -70,7 +75,7 @@ export default function VehicleAlertsPage() {
 
   const runChecks = async () => {
     try {
-      const { error } = await supabaseAdminClient.rpc("run_vehicle_alerts_check");
+      const { error } = await (supabaseAdminClient as any).rpc("run_vehicle_alerts_check");
 
       if (error) throw error;
 

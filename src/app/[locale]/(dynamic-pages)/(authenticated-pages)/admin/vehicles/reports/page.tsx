@@ -40,7 +40,7 @@ export default function VehicleReportsPage() {
 
   const loadVehicles = async () => {
     try {
-      const { data, error } = await supabaseAdminClient
+      const { data, error } = await (supabaseAdminClient as any)
         .from("vehicles")
         .select("id, vehicle_number")
         .eq("status", "active")
@@ -63,7 +63,7 @@ export default function VehicleReportsPage() {
     setLoading(true);
     try {
       // حساب كفاءة الوقود
-      const { data: fuelEfficiency, error: fuelError } = await supabaseAdminClient
+      const { data: fuelEfficiency, error: fuelError } = await (supabaseAdminClient as any)
         .rpc("calculate_fuel_efficiency", {
           p_vehicle_id: selectedVehicle,
           p_days: period,
@@ -75,7 +75,7 @@ export default function VehicleReportsPage() {
       }
 
       // حساب مصاريف الصيانة
-      const { data: maintenance, error: maintenanceError } = await supabaseAdminClient
+      const { data: maintenance, error: maintenanceError } = await (supabaseAdminClient as any)
         .from("vehicle_maintenance")
         .select("amount_paid")
         .eq("vehicle_id", selectedVehicle)
