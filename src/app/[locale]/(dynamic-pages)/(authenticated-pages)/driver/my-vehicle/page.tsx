@@ -70,13 +70,14 @@ export default function DriverVehiclePage() {
       return;
     }
 
-    setVehicle(vehicleResult.data);
+    const vehicleData = vehicleResult.data as any;
+    setVehicle(vehicleData);
 
     // تحميل السجلات
     const [odometerResult, fuelingResult, maintenanceResult] = await Promise.all([
-      getOdometerReadings(vehicleResult.data.id),
-      getFuelingRecords(vehicleResult.data.id),
-      getMaintenanceRecords(vehicleResult.data.id),
+      getOdometerReadings(vehicleData.id),
+      getFuelingRecords(vehicleData.id),
+      getMaintenanceRecords(vehicleData.id),
     ]);
 
     if (odometerResult.data) setOdometerReadings(odometerResult.data);
