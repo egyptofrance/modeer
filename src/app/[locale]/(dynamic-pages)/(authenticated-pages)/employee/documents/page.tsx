@@ -63,8 +63,8 @@ export default function EmployeeDocumentsPage() {
 
         // Check if complete
         const completeResult = await checkDocumentsComplete(emp.id);
-        if (completeResult?.data !== null) {
-          setIsComplete(completeResult.data);
+        if (completeResult?.data !== null && completeResult?.data !== undefined) {
+          setIsComplete(completeResult.data as boolean);
         }
       }
     } catch (error) {
