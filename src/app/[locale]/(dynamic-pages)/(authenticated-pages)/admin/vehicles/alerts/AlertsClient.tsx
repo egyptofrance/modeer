@@ -147,7 +147,7 @@ export function AlertsClient({ initialAlerts }: AlertsClientProps) {
                         {alert.vehicles?.vehicle_number || "غير معروف"}
                       </span>
                       <span className="text-sm text-muted-foreground">
-                        {new Date(alert.created_at).toLocaleDateString("ar-EG")}
+                        {alert.created_at ? new Date(alert.created_at).toLocaleDateString("ar-EG") : "غير محدد"}
                       </span>
                     </div>
                     <p className="text-sm">{alert.message}</p>
