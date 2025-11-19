@@ -557,6 +557,81 @@ export type Database = {
           },
         ]
       }
+      customer_leads: {
+        Row: {
+          call_center_employee_code: string
+          call_center_employee_id: string
+          coupon_code: string
+          coupon_status: string | null
+          created_at: string | null
+          customer_email: string | null
+          customer_name: string
+          customer_phone: string
+          expires_at: string | null
+          id: string
+          incentive_amount: number | null
+          incentive_paid: boolean | null
+          notes: string | null
+          product_interest: string
+          redeemed_at: string | null
+          redeemed_by: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          call_center_employee_code: string
+          call_center_employee_id: string
+          coupon_code: string
+          coupon_status?: string | null
+          created_at?: string | null
+          customer_email?: string | null
+          customer_name: string
+          customer_phone: string
+          expires_at?: string | null
+          id?: string
+          incentive_amount?: number | null
+          incentive_paid?: boolean | null
+          notes?: string | null
+          product_interest: string
+          redeemed_at?: string | null
+          redeemed_by?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          call_center_employee_code?: string
+          call_center_employee_id?: string
+          coupon_code?: string
+          coupon_status?: string | null
+          created_at?: string | null
+          customer_email?: string | null
+          customer_name?: string
+          customer_phone?: string
+          expires_at?: string | null
+          id?: string
+          incentive_amount?: number | null
+          incentive_paid?: boolean | null
+          notes?: string | null
+          product_interest?: string
+          redeemed_at?: string | null
+          redeemed_by?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "customer_leads_call_center_employee_id_fkey"
+            columns: ["call_center_employee_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customer_leads_redeemed_by_fkey"
+            columns: ["redeemed_by"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       customers: {
         Row: {
           address: string | null
@@ -3278,6 +3353,10 @@ export type Database = {
         Args: { amount: number; org_id: string }
         Returns: undefined
       }
+      generate_coupon_code: {
+        Args: { p_employee_code: string }
+        Returns: string
+      }
       get_all_check_constraints: {
         Args: never
         Returns: {
@@ -3365,6 +3444,7 @@ export type Database = {
           view_definition: string
         }[]
       }
+      get_call_center_stats: { Args: { p_employee_id: string }; Returns: Json }
       get_customer_workspace_id: {
         Args: { customer_id_arg: string }
         Returns: string
@@ -3534,6 +3614,10 @@ export type Database = {
         Returns: boolean
       }
       make_user_app_admin: { Args: { user_id_arg: string }; Returns: undefined }
+      redeem_coupon: {
+        Args: { p_coupon_code: string; p_reception_employee_id: string }
+        Returns: Json
+      }
       remove_app_admin_privilege_for_user: {
         Args: { user_id_arg: string }
         Returns: undefined
