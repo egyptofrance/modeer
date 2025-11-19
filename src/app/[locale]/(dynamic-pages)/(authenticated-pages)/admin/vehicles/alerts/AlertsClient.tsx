@@ -3,7 +3,8 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle, AlertTriangle, AlertCircle, Info } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { CheckCircle, AlertTriangle, AlertCircle, Info, Bell } from "lucide-react";
 import { toast } from "sonner";
 
 interface Alert {
