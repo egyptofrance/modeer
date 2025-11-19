@@ -97,7 +97,6 @@ export default function LeaveRequestPage() {
         start_date: formData.start_date,
         end_date: formData.end_date,
         reason: formData.reason,
-        substitute_employee_id: '', // Not needed anymore
         substitute_employee_name: formData.substitute_employee_name,
       });
 

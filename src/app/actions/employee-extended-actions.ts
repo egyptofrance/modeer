@@ -355,6 +355,7 @@ export async function createLeaveRequest(params: {
   start_date: string;
   end_date: string;
   reason: string;
+  substitute_employee_name: string;
   notes?: string;
 }) {
   const supabase = await createSupabaseUserServerActionClient();
