@@ -59,7 +59,7 @@ export default function DriverVehiclePage() {
       return;
     }
 
-    const empId = employeeResult.data.id;
+    const empId = (employeeResult.data as any).id;
     setEmployeeId(empId);
 
     // الحصول على السيارة

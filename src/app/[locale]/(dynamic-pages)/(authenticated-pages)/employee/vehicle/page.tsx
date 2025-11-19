@@ -36,7 +36,7 @@ export default function EmployeeVehiclePage() {
       return;
     }
 
-    const empId = employeeResult.data.id;
+    const empId = (employeeResult.data as any).id;
     setEmployeeId(empId);
 
     // الحصول على السيارة المرتبطة بالمندوب

@@ -1,8 +1,6 @@
 'use server';
 
-import { createClient } from '@/supabase-clients/admin/supabaseAdminClient';
-
-const supabaseAdmin = createClient();
+import { supabaseAdminClient as supabaseAdmin } from '@/supabase-clients/admin/supabaseAdminClient';
 
 // ==================== السيارات ====================
 
