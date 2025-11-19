@@ -101,7 +101,8 @@ export default function LeaveRequestPage() {
       });
 
       if (result.error) {
-        toast.error(typeof result.error === 'string' ? result.error : result.error.message || 'حدث خطأ');
+        const err: any = result.error;
+        toast.error(typeof err === 'string' ? err : err?.message || 'حدث خطأ');
       } else {
         toast.success('تم تقديم طلب الإجازة بنجاح!');
         router.push('/employee/leaves');
