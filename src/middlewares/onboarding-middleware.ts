@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { toSiteURL } from "../utils/helpers";
 import { middlewareLogger } from "../utils/logger";
+import { getDefaultDashboardPath } from "../utils/role-redirect";
 import { dashboardRoutesWithLocale, onboardingPathsWithLocale } from "./paths";
 import { MiddlewareConfig } from "./types";
 import { shouldOnboardUser, withMaybeLocale } from "./utils";
@@ -51,8 +52,18 @@ export const onboardingRedirectMiddleware: MiddlewareConfig = {
         "User should not onboard. Redirecting to dashboard.",
         req.nextUrl.pathname,
       );
+      
+      // Get user role from app_metadata
+      const userRole = maybeUser.app_metadata?.role as string | null;
+      const dashboardPath = getDefaultDashboardPath(userRole);
+      
+      middlewareLogger.log(
+        `Redirecting user with role "${userRole}" to ${dashboardPath}`,
+        req.nextUrl.pathname,
+      );
+      
       return [
-        NextResponse.redirect(toSiteURL(withMaybeLocale(req, "/dashboard"))),
+        NextResponse.redirect(toSiteURL(withMaybeLocale(req, dashboardPath))),
         maybeUser,
       ];
     }

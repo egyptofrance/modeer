@@ -33,6 +33,10 @@ export const dashboardRoutes = [
   `/settings(/.*)?`,
   `/user(/.*)?`,
   `/logout`,
+  `/admin(/.*)?`,
+  `/employee(/.*)?`,
+  `/driver(/.*)?`,
+  `/quality-control(/.*)?`,
 ];
 
 const onboardingPaths = [`/onboarding(/.*)?`];

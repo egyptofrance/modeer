@@ -1,0 +1,72 @@
+[
+  {
+    "name": "أميرة الشافعي",
+    "email": "amira.elshafei@modeer.com",
+    "status": "✅ نجح",
+    "user_id": "41809e41-7b45-45dd-81ed-05b78c2f4b4a",
+    "employee_id": "ade78410-ddae-4a4f-b72f-26b3cbb0756d"
+  },
+  {
+    "name": "أسامة ميخائيل",
+    "email": "osama.mikhail@modeer.com",
+    "status": "✅ نجح",
+    "user_id": "7db4e921-438c-4c10-b407-6daf33826e94",
+    "employee_id": "4f66064e-a55b-4730-ba6b-b23938f72399"
+  },
+  {
+    "name": "محمد الدسوقي",
+    "email": "mohamed.eldesoky@modeer.com",
+    "status": "✅ نجح",
+    "user_id": "e41eabc6-d302-4640-8f5d-539c73486722",
+    "employee_id": "c688110e-51f3-407c-be1c-82be2367f5a5"
+  },
+  {
+    "name": "سمية",
+    "email": "somaya@modeer.com",
+    "status": "✅ نجح",
+    "user_id": "9ea104d7-a320-4508-87b4-80afec0161c9",
+    "employee_id": "8b8cb7bf-e0ff-41df-8ba1-fbc39028b622"
+  },
+  {
+    "name": "فادي",
+    "email": "fady@modeer.com",
+    "status": "✅ نجح",
+    "user_id": "c5e54ad4-a7ca-4ddb-9881-b1f1b0baca1e",
+    "employee_id": "4d61a5ec-f368-44dc-9227-1f4879fe1aec"
+  },
+  {
+    "name": "أسامة",
+    "email": "osama.cc@modeer.com",
+    "status": "✅ نجح",
+    "user_id": "88a20090-a710-4470-aa60-778388994f92",
+    "employee_id": "45b4cc35-d09b-4063-b4c5-9e8b8fd80c57"
+  },
+  {
+    "name": "يوسف",
+    "email": "youssef@modeer.com",
+    "status": "✅ نجح",
+    "user_id": "9c56e44f-3ecb-4e5a-a24e-802e71900ac3",
+    "employee_id": "1e87e5a3-c0cf-43ba-a2b5-d3d95a41f293"
+  },
+  {
+    "name": "عبد الرحمن",
+    "email": "abdelrahman@modeer.com",
+    "status": "✅ نجح",
+    "user_id": "804eb181-7168-48ad-9d12-678e1f85ddfd",
+    "employee_id": "9f36afda-9eec-4a1a-a33b-8e2637a2bf0e"
+  },
+  {
+    "name": "أدهم",
+    "email": "adham@modeer.com",
+    "status": "✅ نجح",
+    "user_id": "87138fca-f8b0-421b-9576-6ba621f743cb",
+    "employee_id": "3014385e-c0b4-4bb6-891d-e0bb52b04589"
+  },
+  {
+    "name": "هاني",
+    "email": "hany@modeer.com",
+    "status": "✅ نجح",
+    "user_id": "dea8206a-a2c1-46b8-b221-fbf64438ba7e",
+    "employee_id": "e3d990f7-9cbf-46a7-b9fd-d1266d4d9707"
+  }
+]
