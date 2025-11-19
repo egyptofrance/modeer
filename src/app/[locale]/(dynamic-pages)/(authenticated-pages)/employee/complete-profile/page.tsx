@@ -114,7 +114,8 @@ export default function CompleteProfilePage() {
         toast.info('رفع الصور سيتم إضافته قريباً');
       }
 
-      const result = await updateEmployeeProfile(employeeId, {
+      const result = await updateEmployeeProfile({
+        employee_id: employeeId,
         ...formData,
         profile_photo_url: photoUrl,
       });
