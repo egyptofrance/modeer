@@ -53,7 +53,7 @@ export default function LeaveRequestPage() {
       }
 
       // Get all employees for substitute selection
-      const supabase = createClient();
+      const supabase = createClient;
       const { data, error } = await supabase
         .from('employees')
         .select('id, full_name, employee_code')
