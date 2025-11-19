@@ -48,16 +48,17 @@ export default function CompleteProfilePage() {
     try {
       const result = await getEmployeeData();
       if (result.data) {
-        setCurrentData(result.data);
-        setEmployeeId(result.data.id);
+        const employee = result.data as any;
+        setCurrentData(employee);
+        setEmployeeId(employee.id);
         setFormData({
-          full_name: result.data.full_name || '',
-          phone: result.data.phone || '',
-          date_of_birth: result.data.date_of_birth || '',
-          qualification_level: result.data.qualification_level || '',
-          qualification_name: result.data.qualification_name || '',
-          address: result.data.address || '',
-          gender: result.data.gender || '',
+          full_name: employee.full_name || '',
+          phone: employee.phone || '',
+          date_of_birth: employee.date_of_birth || '',
+          qualification_level: employee.qualification_level || '',
+          qualification_name: employee.qualification_name || '',
+          address: employee.address || '',
+          gender: employee.gender || '',
         });
       } else {
         toast.error('فشل في تحميل بيانات الموظف');
