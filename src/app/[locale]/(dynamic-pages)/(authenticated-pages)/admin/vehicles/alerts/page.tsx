@@ -18,7 +18,7 @@ interface Alert {
   created_at: string;
   vehicles: {
     vehicle_number: string;
-  };
+  } | null;
 }
 
 export default function VehicleAlertsPage() {
@@ -32,26 +32,20 @@ export default function VehicleAlertsPage() {
 
   const loadAlerts = async () => {
     try {
-      let query = supabaseAdminClient
+      const queryBuilder = supabaseAdminClient
         .from("vehicle_alerts")
-        .select(`
-          *,
-          vehicles (
-            vehicle_number
-          )
-        `)
+        .select("*, vehicles(vehicle_number)")
         .order("created_at", { ascending: false });
 
-      if (filter === "unread") {
-        query = query.eq("is_read", false);
-      }
-
-      const { data, error } = await query;
+      const { data, error } = filter === "unread" 
+        ? await queryBuilder.eq("is_read", false)
+        : await queryBuilder;
 
       if (error) throw error;
-      setAlerts((data as any) || []);
-    } catch (error: any) {
-      toast.error("فشل تحميل التنبيهات: " + error.message);
+      setAlerts(data || []);
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : "حدث خطأ غير معروف";
+      toast.error("فشل تحميل التنبيهات: " + errorMessage);
     } finally {
       setLoading(false);
     }
@@ -68,8 +62,9 @@ export default function VehicleAlertsPage() {
 
       toast.success("تم تحديد التنبيه كمقروء");
       loadAlerts();
-    } catch (error: any) {
-      toast.error("فشل تحديث التنبيه: " + error.message);
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : "حدث خطأ غير معروف";
+      toast.error("فشل تحديث التنبيه: " + errorMessage);
     }
   };
 
@@ -81,8 +76,9 @@ export default function VehicleAlertsPage() {
 
       toast.success("تم تشغيل فحص التنبيهات");
       loadAlerts();
-    } catch (error: any) {
-      toast.error("فشل تشغيل الفحص: " + error.message);
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : "حدث خطأ غير معروف";
+      toast.error("فشل تشغيل الفحص: " + errorMessage);
     }
   };
 
@@ -167,7 +163,7 @@ export default function VehicleAlertsPage() {
                     {getSeverityIcon(alert.severity)}
                     <div>
                       <CardTitle className="text-lg">
-                        {(alert as any).vehicles?.vehicle_number || "غير محدد"}
+                        {alert.vehicles?.vehicle_number || "غير محدد"}
                       </CardTitle>
                       <Badge className={`mt-1 ${getSeverityBadge(alert.severity)}`}>
                         {getAlertTypeLabel(alert.alert_type)}

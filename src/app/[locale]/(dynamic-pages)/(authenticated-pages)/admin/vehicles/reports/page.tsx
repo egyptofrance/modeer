@@ -47,12 +47,13 @@ export default function VehicleReportsPage() {
         .order("vehicle_number");
 
       if (error) throw error;
-      setVehicles((data as any) || []);
+      setVehicles(data || []);
       if (data && data.length > 0) {
         setSelectedVehicle(data[0].id);
       }
-    } catch (error: any) {
-      toast.error("فشل تحميل السيارات: " + error.message);
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : "حدث خطأ غير معروف";
+      toast.error("فشل تحميل السيارات: " + errorMessage);
     }
   };
 
@@ -70,7 +71,7 @@ export default function VehicleReportsPage() {
 
       if (fuelError) throw fuelError;
       if (fuelEfficiency && fuelEfficiency.length > 0) {
-        setFuelData(fuelEfficiency[0]);
+        setFuelData(fuelEfficiency[0] as FuelEfficiency);
       }
 
       // حساب مصاريف الصيانة
@@ -81,10 +82,16 @@ export default function VehicleReportsPage() {
         .gte("maintenance_date", new Date(Date.now() - period * 24 * 60 * 60 * 1000).toISOString().split("T")[0]);
 
       if (maintenanceError) throw maintenanceError;
-      const total = (maintenance as any)?.reduce((sum: number, m: any) => sum + parseFloat(m.amount_paid), 0) || 0;
+      
+      const total = maintenance?.reduce((sum: number, m: { amount_paid: string | number }) => {
+        const amount = typeof m.amount_paid === 'string' ? parseFloat(m.amount_paid) : m.amount_paid;
+        return sum + amount;
+      }, 0) || 0;
+      
       setMaintenanceTotal(total);
-    } catch (error: any) {
-      toast.error("فشل تحميل التقارير: " + error.message);
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : "حدث خطأ غير معروف";
+      toast.error("فشل تحميل التقارير: " + errorMessage);
     } finally {
       setLoading(false);
     }
