@@ -42,7 +42,7 @@ export async function UserList({
           </TableHeader>
           <TableBody>
             {users.map((user) => {
-              const isAppAdmin = user.user_roles.some(
+              const isAppAdmin = Array.isArray(user.user_roles) && user.user_roles.some(
                 (role) => role.role === "admin",
               );
               const email =
