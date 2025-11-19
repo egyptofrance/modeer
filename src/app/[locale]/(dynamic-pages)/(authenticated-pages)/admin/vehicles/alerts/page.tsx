@@ -10,8 +10,8 @@ interface Alert {
   alert_type: string;
   severity: string;
   message: string;
-  is_read: boolean;
-  created_at: string;
+  is_read: boolean | null;
+  created_at: string | null;
   vehicles: {
     vehicle_number: string;
   } | null;
