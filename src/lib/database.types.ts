@@ -1602,6 +1602,304 @@ export type Database = {
         }
         Relationships: []
       }
+      vehicles: {
+        Row: {
+          id: string
+          vehicle_number: string
+          chassis_number: string
+          license_issue_date: string | null
+          license_renewal_date: string | null
+          license_photo_url: string | null
+          front_photo_url: string | null
+          back_photo_url: string | null
+          right_photo_url: string | null
+          left_photo_url: string | null
+          driver_id: string | null
+          representative_id: string | null
+          status: string | null
+          created_at: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          id?: string
+          vehicle_number: string
+          chassis_number: string
+          license_issue_date?: string | null
+          license_renewal_date?: string | null
+          license_photo_url?: string | null
+          front_photo_url?: string | null
+          back_photo_url?: string | null
+          right_photo_url?: string | null
+          left_photo_url?: string | null
+          driver_id?: string | null
+          representative_id?: string | null
+          status?: string | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          id?: string
+          vehicle_number?: string
+          chassis_number?: string
+          license_issue_date?: string | null
+          license_renewal_date?: string | null
+          license_photo_url?: string | null
+          front_photo_url?: string | null
+          back_photo_url?: string | null
+          right_photo_url?: string | null
+          left_photo_url?: string | null
+          driver_id?: string | null
+          representative_id?: string | null
+          status?: string | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vehicles_driver_id_fkey"
+            columns: ["driver_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "vehicles_representative_id_fkey"
+            columns: ["representative_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      vehicle_odometer_readings: {
+        Row: {
+          id: string
+          vehicle_id: string
+          driver_id: string
+          reading_type: string
+          reading_value: number
+          photo_url: string | null
+          reading_date: string
+          reading_time: string
+          created_at: string | null
+        }
+        Insert: {
+          id?: string
+          vehicle_id: string
+          driver_id: string
+          reading_type: string
+          reading_value: number
+          photo_url?: string | null
+          reading_date?: string
+          reading_time?: string
+          created_at?: string | null
+        }
+        Update: {
+          id?: string
+          vehicle_id?: string
+          driver_id?: string
+          reading_type?: string
+          reading_value?: number
+          photo_url?: string | null
+          reading_date?: string
+          reading_time?: string
+          created_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vehicle_odometer_readings_vehicle_id_fkey"
+            columns: ["vehicle_id"]
+            isOneToOne: false
+            referencedRelation: "vehicles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "vehicle_odometer_readings_driver_id_fkey"
+            columns: ["driver_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      vehicle_fueling: {
+        Row: {
+          id: string
+          vehicle_id: string
+          driver_id: string
+          odometer_photo_url: string | null
+          amount_paid: number
+          liters: number
+          fueling_date: string
+          fueling_time: string
+          created_at: string | null
+        }
+        Insert: {
+          id?: string
+          vehicle_id: string
+          driver_id: string
+          odometer_photo_url?: string | null
+          amount_paid: number
+          liters: number
+          fueling_date?: string
+          fueling_time?: string
+          created_at?: string | null
+        }
+        Update: {
+          id?: string
+          vehicle_id?: string
+          driver_id?: string
+          odometer_photo_url?: string | null
+          amount_paid?: number
+          liters?: number
+          fueling_date?: string
+          fueling_time?: string
+          created_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vehicle_fueling_vehicle_id_fkey"
+            columns: ["vehicle_id"]
+            isOneToOne: false
+            referencedRelation: "vehicles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "vehicle_fueling_driver_id_fkey"
+            columns: ["driver_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      vehicle_maintenance: {
+        Row: {
+          id: string
+          vehicle_id: string
+          driver_id: string
+          maintenance_type: string
+          amount_paid: number
+          odometer_reading: number | null
+          next_maintenance_km: number | null
+          maintenance_date: string
+          notes: string | null
+          created_at: string | null
+        }
+        Insert: {
+          id?: string
+          vehicle_id: string
+          driver_id: string
+          maintenance_type: string
+          amount_paid: number
+          odometer_reading?: number | null
+          next_maintenance_km?: number | null
+          maintenance_date?: string
+          notes?: string | null
+          created_at?: string | null
+        }
+        Update: {
+          id?: string
+          vehicle_id?: string
+          driver_id?: string
+          maintenance_type?: string
+          amount_paid?: number
+          odometer_reading?: number | null
+          next_maintenance_km?: number | null
+          maintenance_date?: string
+          notes?: string | null
+          created_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vehicle_maintenance_vehicle_id_fkey"
+            columns: ["vehicle_id"]
+            isOneToOne: false
+            referencedRelation: "vehicles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "vehicle_maintenance_driver_id_fkey"
+            columns: ["driver_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      vehicle_trips: {
+        Row: {
+          id: string
+          vehicle_id: string
+          driver_id: string
+          representative_id: string | null
+          client_name: string
+          pickup_location: string
+          delivery_location: string
+          items_description: string | null
+          pickup_time: string | null
+          delivery_time: string | null
+          delivery_status: string | null
+          trip_date: string
+          created_at: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          id?: string
+          vehicle_id: string
+          driver_id: string
+          representative_id?: string | null
+          client_name: string
+          pickup_location: string
+          delivery_location: string
+          items_description?: string | null
+          pickup_time?: string | null
+          delivery_time?: string | null
+          delivery_status?: string | null
+          trip_date?: string
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          id?: string
+          vehicle_id?: string
+          driver_id?: string
+          representative_id?: string | null
+          client_name?: string
+          pickup_location?: string
+          delivery_location?: string
+          items_description?: string | null
+          pickup_time?: string | null
+          delivery_time?: string | null
+          delivery_status?: string | null
+          trip_date?: string
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vehicle_trips_vehicle_id_fkey"
+            columns: ["vehicle_id"]
+            isOneToOne: false
+            referencedRelation: "vehicles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "vehicle_trips_driver_id_fkey"
+            columns: ["driver_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "vehicle_trips_representative_id_fkey"
+            columns: ["representative_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
     }
     Views: {
       [_ in never]: never
