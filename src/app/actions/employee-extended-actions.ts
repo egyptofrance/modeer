@@ -521,3 +521,21 @@ export async function getEmployeeData() {
   return { data, error: null };
 }
 
+
+// ==================== قائمة الموظفين ====================
+
+export async function getAllActiveEmployees() {
+  const supabase = await createSupabaseUserServerActionClient();
+  
+  const { data, error } = await supabase
+    .from('employees')
+    .select('id, full_name, employee_code')
+    .eq('is_active', true)
+    .order('full_name');
+  
+  if (error) {
+    console.error('Error getting active employees:', error);
+    return { data: null, error };
+  }
+  return { data, error: null };
+}
