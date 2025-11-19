@@ -71,8 +71,8 @@ export default function EmployeeLeavePage() {
 
         // Load balance
         const balanceResult = await getLeaveBalance(emp.id);
-        if (balanceResult?.data) {
-          setBalance(balanceResult.data[0]); // Returns array with one row
+        if (balanceResult?.data && Array.isArray(balanceResult.data) && balanceResult.data.length > 0) {
+          setBalance(balanceResult.data[0] as any);
         }
 
         // Load requests
