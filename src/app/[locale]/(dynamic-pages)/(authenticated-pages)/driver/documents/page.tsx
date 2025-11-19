@@ -39,9 +39,9 @@ export default function DriverDocumentsPage() {
   const loadEmployeeData = async () => {
     try {
       const employee = await getEmployeeData();
-      if (employee) {
-        setEmployeeId(employee.id);
-        await loadDocuments(employee.id);
+      if (employee && employee.data) {
+        setEmployeeId(employee.data.id);
+        await loadDocuments(employee.data.id);
       }
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : "حدث خطأ غير معروف";
