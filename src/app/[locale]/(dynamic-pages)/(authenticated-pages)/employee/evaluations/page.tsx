@@ -63,14 +63,14 @@ export default function EmployeeEvaluationsPage() {
 
         // Load latest
         const latestResult = await getLatestEvaluation(emp.id);
-        if (latestResult?.data && latestResult.data.length > 0) {
-          setLatest(latestResult.data[0]);
+        if (latestResult?.data && Array.isArray(latestResult.data) && latestResult.data.length > 0) {
+          setLatest(latestResult.data[0] as any);
         }
 
         // Load average
         const avgResult = await getAverageEvaluation(emp.id);
-        if (avgResult?.data !== null) {
-          setAverage(avgResult.data);
+        if (avgResult?.data !== null && avgResult?.data !== undefined) {
+          setAverage(avgResult.data as number);
         }
       }
     } catch (error) {
