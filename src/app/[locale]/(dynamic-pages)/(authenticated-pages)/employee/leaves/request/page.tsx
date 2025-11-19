@@ -24,7 +24,7 @@ import {
 } from '@/components/ui/card';
 import { toast } from 'sonner';
 import { ArrowRight, Calendar, Loader2, Send } from 'lucide-react';
-import { createClient } from '@/utils/supabase/client';
+import { supabaseUserClientComponent as createClient } from '@/supabase-clients/user/supabaseUserClientComponent';
 
 export default function LeaveRequestPage() {
   const router = useRouter();
