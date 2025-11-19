@@ -106,12 +106,12 @@ export default function CompleteProfilePage() {
 
     setLoading(true);
     try {
-      // TODO: رفع الصورة إلى Supabase Storage
-      let photoUrl = currentData?.extended_data?.profile_photo_url;
+      // حفظ الصورة كـ Base64
+      let photoUrl = currentData?.profile_photo_url || currentData?.extended_data?.profile_photo_url;
       
-      if (photoFile) {
-        // سيتم إضافة كود رفع الصورة لاحقاً
-        toast.info('رفع الصور سيتم إضافته قريباً');
+      if (photoFile && photoPreview) {
+        // استخدام Base64 من المعاينة
+        photoUrl = photoPreview;
       }
 
       const result = await updateEmployeeProfile({
