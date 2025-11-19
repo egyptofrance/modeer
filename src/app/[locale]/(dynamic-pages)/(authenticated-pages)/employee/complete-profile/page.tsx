@@ -2,10 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import {
-  createEmployee,
-  getEmployeeTypes,
-} from '@/app/actions/admin-create-employee';
+import { updateEmployeeProfile } from '@/app/actions/admin-create-employee';
+import { getEmployeeData } from '@/app/actions/employee-extended-actions';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -24,20 +22,17 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { toast } from 'sonner';
-import { ArrowRight, Loader2, UserPlus } from 'lucide-react';
+import { Loader2, Save, UserCheck } from 'lucide-react';
 
-export default function AddEmployeePage() {
+export default function CompleteProfilePage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
-  const [loadingTypes, setLoadingTypes] = useState(true);
-  const [employeeTypes, setEmployeeTypes] = useState<any[]>([]);
+  const [loadingData, setLoadingData] = useState(true);
+  const [employeeId, setEmployeeId] = useState<string | null>(null);
+  const [currentData, setCurrentData] = useState<any>(null);
   const [formData, setFormData] = useState({
     full_name: '',
-    email: '',
-    password: '',
     phone: '',
-    employee_type_id: '',
-    base_salary: '',
     date_of_birth: '',
     qualification_level: '',
     qualification_name: '',
@@ -46,51 +41,55 @@ export default function AddEmployeePage() {
   });
 
   useEffect(() => {
-    loadEmployeeTypes();
+    loadEmployeeData();
   }, []);
 
-  const loadEmployeeTypes = async () => {
+  const loadEmployeeData = async () => {
     try {
-      const result = await getEmployeeTypes();
+      const result = await getEmployeeData();
       if (result.data) {
-        setEmployeeTypes(result.data);
+        setCurrentData(result.data);
+        setEmployeeId(result.data.id);
+        setFormData({
+          full_name: result.data.full_name || '',
+          phone: result.data.phone || '',
+          date_of_birth: result.data.date_of_birth || '',
+          qualification_level: result.data.qualification_level || '',
+          qualification_name: result.data.qualification_name || '',
+          address: result.data.address || '',
+          gender: result.data.gender || '',
+        });
+      } else {
+        toast.error('فشل في تحميل بيانات الموظف');
       }
     } catch (error) {
-      console.error('Error loading employee types:', error);
-      toast.error('فشل في تحميل أنواع الوظائف');
+      console.error('Error loading employee data:', error);
+      toast.error('حدث خطأ أثناء تحميل البيانات');
     } finally {
-      setLoadingTypes(false);
+      setLoadingData(false);
     }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!formData.full_name || !formData.email || !formData.password) {
+    if (!employeeId) {
+      toast.error('لم يتم العثور على معرف الموظف');
+      return;
+    }
+
+    if (!formData.full_name || !formData.phone) {
       toast.error('يرجى ملء الحقول المطلوبة');
-      return;
-    }
-
-    if (!formData.employee_type_id) {
-      toast.error('يرجى اختيار نوع الوظيفة');
-      return;
-    }
-
-    if (!formData.base_salary || parseFloat(formData.base_salary) <= 0) {
-      toast.error('يرجى إدخال راتب أساسي صحيح');
       return;
     }
 
     setLoading(true);
 
     try {
-      const result = await createEmployee({
+      const result = await updateEmployeeProfile({
+        employee_id: employeeId,
         full_name: formData.full_name,
-        email: formData.email,
-        password: formData.password,
         phone: formData.phone,
-        employee_type_id: formData.employee_type_id,
-        base_salary: parseFloat(formData.base_salary),
         date_of_birth: formData.date_of_birth || undefined,
         qualification_level: formData.qualification_level || undefined,
         qualification_name: formData.qualification_name || undefined,
@@ -101,20 +100,18 @@ export default function AddEmployeePage() {
       if (result.error) {
         toast.error(result.error);
       } else {
-        toast.success(
-          `تم إضافة الموظف بنجاح! رقم الموظف: ${result.data?.employee_code}`
-        );
-        router.push('/admin/employees');
+        toast.success('تم تحديث بياناتك بنجاح!');
+        router.push('/employee/my-data');
       }
     } catch (error) {
-      console.error('Error creating employee:', error);
-      toast.error('حدث خطأ أثناء إضافة الموظف');
+      console.error('Error updating profile:', error);
+      toast.error('حدث خطأ أثناء تحديث البيانات');
     } finally {
       setLoading(false);
     }
   };
 
-  if (loadingTypes) {
+  if (loadingData) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <Loader2 className="w-8 h-8 animate-spin" />
@@ -122,26 +119,25 @@ export default function AddEmployeePage() {
     );
   }
 
+  // إذا كانت البيانات مكتملة، إعادة التوجيه
+  const isProfileComplete =
+    currentData?.date_of_birth &&
+    currentData?.qualification_level &&
+    currentData?.address &&
+    currentData?.gender;
+
   return (
     <div className="container mx-auto py-8 max-w-4xl" dir="rtl">
-      <Button
-        variant="ghost"
-        onClick={() => router.back()}
-        className="mb-4"
-      >
-        <ArrowRight className="w-4 h-4 ml-2" />
-        رجوع
-      </Button>
-
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <UserPlus className="w-6 h-6" />
-            إضافة موظف جديد
+            <UserCheck className="w-6 h-6" />
+            {isProfileComplete ? 'تحديث البيانات الشخصية' : 'إكمال البيانات الشخصية'}
           </CardTitle>
           <CardDescription>
-            أدخل بيانات الموظف الجديد وسيتم إنشاء حساب له تلقائياً. يمكن للموظف
-            إكمال بياناته لاحقاً.
+            {isProfileComplete
+              ? 'يمكنك تحديث بياناتك الشخصية في أي وقت'
+              : 'يرجى إكمال بياناتك الشخصية للاستفادة الكاملة من النظام'}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -149,7 +145,7 @@ export default function AddEmployeePage() {
             {/* البيانات الأساسية */}
             <div className="space-y-4">
               <h3 className="text-lg font-semibold border-b pb-2">
-                البيانات الأساسية *
+                البيانات الأساسية
               </h3>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -167,35 +163,6 @@ export default function AddEmployeePage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="email">البريد الإلكتروني *</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    value={formData.email}
-                    onChange={(e) =>
-                      setFormData({ ...formData, email: e.target.value })
-                    }
-                    required
-                    placeholder="example@company.com"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="password">كلمة المرور *</Label>
-                  <Input
-                    id="password"
-                    type="password"
-                    value={formData.password}
-                    onChange={(e) =>
-                      setFormData({ ...formData, password: e.target.value })
-                    }
-                    required
-                    minLength={6}
-                    placeholder="6 أحرف على الأقل"
-                  />
-                </div>
-
-                <div className="space-y-2">
                   <Label htmlFor="phone">رقم الهاتف *</Label>
                   <Input
                     id="phone"
@@ -208,60 +175,14 @@ export default function AddEmployeePage() {
                     placeholder="01xxxxxxxxx"
                   />
                 </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="employee_type_id">نوع الوظيفة *</Label>
-                  <Select
-                    value={formData.employee_type_id}
-                    onValueChange={(value) =>
-                      setFormData({ ...formData, employee_type_id: value })
-                    }
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="اختر نوع الوظيفة" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {employeeTypes.map((type) => (
-                        <SelectItem key={type.id} value={type.id}>
-                          {type.name} ({type.code_prefix})
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="base_salary">الراتب الأساسي (شهري) *</Label>
-                  <Input
-                    id="base_salary"
-                    type="number"
-                    min="0"
-                    step="0.01"
-                    value={formData.base_salary}
-                    onChange={(e) =>
-                      setFormData({ ...formData, base_salary: e.target.value })
-                    }
-                    required
-                    placeholder="0.00"
-                  />
-                  {formData.base_salary && (
-                    <p className="text-sm text-muted-foreground">
-                      الراتب اليومي:{' '}
-                      {(parseFloat(formData.base_salary) / 30).toFixed(2)} جنيه
-                    </p>
-                  )}
-                </div>
               </div>
             </div>
 
-            {/* البيانات الإضافية (اختيارية) */}
+            {/* البيانات الشخصية */}
             <div className="space-y-4">
               <h3 className="text-lg font-semibold border-b pb-2">
-                البيانات الإضافية (اختيارية)
+                البيانات الشخصية
               </h3>
-              <p className="text-sm text-muted-foreground">
-                يمكن للموظف إكمال هذه البيانات لاحقاً من حسابه
-              </p>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
@@ -296,7 +217,16 @@ export default function AddEmployeePage() {
                     </SelectContent>
                   </Select>
                 </div>
+              </div>
+            </div>
 
+            {/* المؤهلات الدراسية */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold border-b pb-2">
+                المؤهلات الدراسية
+              </h3>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="qualification_level">المؤهل الدراسي</Label>
                   <Select
@@ -332,20 +262,50 @@ export default function AddEmployeePage() {
                     placeholder="مثال: بكالوريوس تجارة"
                   />
                 </div>
-
-                <div className="space-y-2 md:col-span-2">
-                  <Label htmlFor="address">العنوان</Label>
-                  <Input
-                    id="address"
-                    value={formData.address}
-                    onChange={(e) =>
-                      setFormData({ ...formData, address: e.target.value })
-                    }
-                    placeholder="أدخل العنوان الكامل"
-                  />
-                </div>
               </div>
             </div>
+
+            {/* العنوان */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold border-b pb-2">العنوان</h3>
+
+              <div className="space-y-2">
+                <Label htmlFor="address">العنوان الكامل</Label>
+                <Input
+                  id="address"
+                  value={formData.address}
+                  onChange={(e) =>
+                    setFormData({ ...formData, address: e.target.value })
+                  }
+                  placeholder="أدخل العنوان الكامل"
+                />
+              </div>
+            </div>
+
+            {/* معلومات الحساب (للعرض فقط) */}
+            {currentData && (
+              <div className="space-y-4 bg-muted p-4 rounded-lg">
+                <h3 className="text-lg font-semibold">معلومات الحساب</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <span className="font-medium">رقم الموظف:</span>{' '}
+                    {currentData.employee_code}
+                  </div>
+                  <div>
+                    <span className="font-medium">البريد الإلكتروني:</span>{' '}
+                    {currentData.email}
+                  </div>
+                  <div>
+                    <span className="font-medium">الوظيفة:</span>{' '}
+                    {currentData.employee_types?.name}
+                  </div>
+                  <div>
+                    <span className="font-medium">تاريخ التعيين:</span>{' '}
+                    {currentData.hire_date}
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* الأزرار */}
             <div className="flex gap-4 pt-4">
@@ -353,23 +313,25 @@ export default function AddEmployeePage() {
                 {loading ? (
                   <>
                     <Loader2 className="w-4 h-4 ml-2 animate-spin" />
-                    جاري الإضافة...
+                    جاري الحفظ...
                   </>
                 ) : (
                   <>
-                    <UserPlus className="w-4 h-4 ml-2" />
-                    إضافة الموظف
+                    <Save className="w-4 h-4 ml-2" />
+                    حفظ البيانات
                   </>
                 )}
               </Button>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => router.back()}
-                disabled={loading}
-              >
-                إلغاء
-              </Button>
+              {isProfileComplete && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => router.push('/employee/my-data')}
+                  disabled={loading}
+                >
+                  إلغاء
+                </Button>
+              )}
             </div>
           </form>
         </CardContent>
