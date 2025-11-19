@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { toast } from "sonner";
 import { supabaseUserClientComponent } from "@/supabase-clients/user/supabaseUserClientComponent";
 
@@ -17,6 +18,7 @@ export default function RegisterCustomerPage() {
     customer_name: "",
     customer_phone: "",
     product_interest: "",
+    delivery_method: "self_pickup" as "self_pickup" | "shipping_company",
   });
 
   useEffect(() => {
@@ -82,6 +84,7 @@ export default function RegisterCustomerPage() {
           customer_name: formData.customer_name,
           customer_phone: formData.customer_phone,
           product_interest: formData.product_interest,
+          delivery_method: formData.delivery_method,
           coupon_status: "pending",
         });
 
@@ -94,6 +97,7 @@ export default function RegisterCustomerPage() {
         customer_name: "",
         customer_phone: "",
         product_interest: "",
+        delivery_method: "self_pickup",
       });
     } catch (error: any) {
       console.error("Error registering customer:", error);
@@ -146,6 +150,28 @@ export default function RegisterCustomerPage() {
                   placeholder="مثال: iPhone 13"
                   required
                 />
+              </div>
+
+              <div className="md:col-span-2">
+                <Label>طريقة استلام الجهاز *</Label>
+                <RadioGroup
+                  value={formData.delivery_method}
+                  onValueChange={(value) => setFormData({ ...formData, delivery_method: value as "self_pickup" | "shipping_company" })}
+                  className="flex gap-4 mt-2"
+                >
+                  <div className="flex items-center space-x-2 space-x-reverse">
+                    <RadioGroupItem value="self_pickup" id="self_pickup" />
+                    <Label htmlFor="self_pickup" className="cursor-pointer">
+                      استلام شخصي (العميل سيأتي بنفسه)
+                    </Label>
+                  </div>
+                  <div className="flex items-center space-x-2 space-x-reverse">
+                    <RadioGroupItem value="shipping_company" id="shipping_company" />
+                    <Label htmlFor="shipping_company" className="cursor-pointer">
+                      شركة شحن (المندوب سيوصل الجهاز)
+                    </Label>
+                  </div>
+                </RadioGroup>
               </div>
             </div>
 
