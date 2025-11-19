@@ -46,7 +46,7 @@ export default function EmployeeVehiclePage() {
     const vehiclesResult = await getAllVehicles();
 
     if (vehiclesResult.data) {
-      const myVehicle = vehiclesResult.data.find((v: any) => v.representative_id === empId);
+      const myVehicle: any = vehiclesResult.data.find((v: any) => v.representative_id === empId);
       if (myVehicle) {
         setVehicle(myVehicle);
         setDriverId(myVehicle.driver_id);
