@@ -509,3 +509,65 @@ export async function getSystemStatistics() {
     error: null,
   };
 }
+
+
+// ==================== التقارير ====================
+
+export async function getEmployeeReport(params: { employeeId: string }) {
+  const supabase = await createSupabaseUserServerActionClient();
+  
+  // Get employee data
+  const { data: employee } = await supabase
+    .from('employees')
+    .select('*, employee_types(name)')
+    .eq('id', params.employeeId)
+    .single();
+
+  // Get training stats
+  const { data: training } = await supabase
+    .rpc('get_employee_training_report', { p_employee_id: params.employeeId });
+
+  // Get evaluation stats
+  const { data: evaluations } = await supabase
+    .rpc('get_employee_evaluation_stats', { p_employee_id: params.employeeId });
+
+  // Get leave stats
+  const { data: leave } = await supabase
+    .rpc('get_employee_leave_stats', { p_employee_id: params.employeeId });
+
+  // Get penalty stats
+  const { data: penalties } = await supabase
+    .rpc('get_employee_penalties_report', { p_employee_id: params.employeeId });
+
+  return {
+    data: {
+      employee,
+      training: Array.isArray(training) && training.length > 0 ? training[0] : null,
+      evaluations: Array.isArray(evaluations) && evaluations.length > 0 ? evaluations[0] : null,
+      leave: Array.isArray(leave) && leave.length > 0 ? leave[0] : null,
+      penalties: Array.isArray(penalties) && penalties.length > 0 ? penalties[0] : null,
+    },
+    error: null,
+  };
+}
+
+export async function getSystemStats() {
+  const supabase = await createSupabaseUserServerActionClient();
+
+  const [employees, leaveRequests, evaluations, penalties] = await Promise.all([
+    supabase.from('employees').select('id', { count: 'exact', head: true }),
+    supabase.from('leave_requests').select('id', { count: 'exact', head: true }),
+    supabase.from('employee_evaluations').select('id', { count: 'exact', head: true }),
+    supabase.from('employee_penalties').select('id', { count: 'exact', head: true }),
+  ]);
+
+  return {
+    data: {
+      total_employees: employees.count || 0,
+      total_leave_requests: leaveRequests.count || 0,
+      total_evaluations: evaluations.count || 0,
+      total_penalties: penalties.count || 0,
+    },
+    error: null,
+  };
+}
