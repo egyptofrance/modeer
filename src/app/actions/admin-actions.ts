@@ -338,3 +338,108 @@ export const getSystemStatistics = authActionClient
       total_incentives_this_month: totalIncentives,
     };
   });
+
+// ==================== إدارة الإجازات ====================
+
+export async function getAllLeaveRequests() {
+  const supabase = await createSupabaseUserServerActionClient();
+  
+  const { data, error } = await supabase
+    .from('leave_requests')
+    .select(`
+      *,
+      employees!inner(
+        full_name,
+        employee_code
+      )
+    `)
+    .order('created_at', { ascending: false });
+  
+  if (error) {
+    console.error('Error getting all leave requests:', error);
+    return { data: null, error };
+  }
+  
+  // Flatten the data
+  const formattedData = data.map((req: any) => ({
+    ...req,
+    employee_name: req.employees?.full_name,
+    employee_code: req.employees?.employee_code,
+  }));
+  
+  return { data: formattedData, error: null };
+}
+
+export async function approveLeaveRequest(requestId: string) {
+  const supabase = await createSupabaseUserServerActionClient();
+  
+  // Get current user
+  const { data: userData } = await supabase.auth.getUser();
+  if (!userData.user) {
+    return { data: null, error: 'User not authenticated' };
+  }
+  
+  // Get reviewer name
+  const { data: empData } = await supabase
+    .from('employees')
+    .select('full_name')
+    .eq('user_id', userData.user.id)
+    .single();
+  
+  const { data, error } = await supabase
+    .from('leave_requests')
+    .update({
+      status: 'موافق عليها',
+      reviewed_by: userData.user.id,
+      reviewed_by_name: empData?.full_name || 'المدير',
+      reviewed_at: new Date().toISOString(),
+    })
+    .eq('id', requestId)
+    .select()
+    .single();
+  
+  if (error) {
+    console.error('Error approving leave request:', error);
+    return { data: null, error: error.message };
+  }
+  return { data, error: null };
+}
+
+export async function rejectLeaveRequest(
+  requestId: string,
+  rejectionReason: string
+) {
+  const supabase = await createSupabaseUserServerActionClient();
+  
+  // Get current user
+  const { data: userData } = await supabase.auth.getUser();
+  if (!userData.user) {
+    return { data: null, error: 'User not authenticated' };
+  }
+  
+  // Get reviewer name
+  const { data: empData } = await supabase
+    .from('employees')
+    .select('full_name')
+    .eq('user_id', userData.user.id)
+    .single();
+  
+  const { data, error } = await supabase
+    .from('leave_requests')
+    .update({
+      status: 'مرفوضة',
+      reviewed_by: userData.user.id,
+      reviewed_by_name: empData?.full_name || 'المدير',
+      reviewed_at: new Date().toISOString(),
+      rejection_reason: rejectionReason,
+    })
+    .eq('id', requestId)
+    .select()
+    .single();
+  
+  if (error) {
+    console.error('Error rejecting leave request:', error);
+    return { data: null, error: error.message };
+  }
+  return { data, error: null };
+}

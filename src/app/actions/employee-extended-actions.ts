@@ -520,3 +520,156 @@ export async function getEmployeeData() {
   
   return { data, error: null };
 }
+
+// ==================== الإجازات ====================
+
+export async function getLeaveBalance(employeeId: string) {
+  const supabase = await createSupabaseUserServerActionClient();
+  
+  // Get current employee if not provided
+  if (!employeeId) {
+    const { data: userData } = await supabase.auth.getUser();
+    if (!userData.user) {
+      return { data: null, error: 'User not authenticated' };
+    }
+    
+    const { data: empData } = await supabase
+      .from('employees')
+      .select('id')
+      .eq('user_id', userData.user.id)
+      .single();
+    
+    if (!empData) {
+      return { data: null, error: 'Employee not found' };
+    }
+    
+    employeeId = empData.id;
+  }
+  
+  const { data, error } = await supabase
+    .from('leave_balance')
+    .select('*')
+    .eq('employee_id', employeeId)
+    .eq('year', new Date().getFullYear())
+    .single();
+  
+  if (error) {
+    console.error('Error getting leave balance:', error);
+    return { data: null, error };
+  }
+  return { data, error: null };
+}
+
+export async function getLeaveRequests(employeeId: string) {
+  const supabase = await createSupabaseUserServerActionClient();
+  
+  // Get current employee if not provided
+  if (!employeeId) {
+    const { data: userData } = await supabase.auth.getUser();
+    if (!userData.user) {
+      return { data: null, error: 'User not authenticated' };
+    }
+    
+    const { data: empData } = await supabase
+      .from('employees')
+      .select('id')
+      .eq('user_id', userData.user.id)
+      .single();
+    
+    if (!empData) {
+      return { data: null, error: 'Employee not found' };
+    }
+    
+    employeeId = empData.id;
+  }
+  
+  const { data, error } = await supabase
+    .from('leave_requests')
+    .select('*')
+    .eq('employee_id', employeeId)
+    .order('created_at', { ascending: false });
+  
+  if (error) {
+    console.error('Error getting leave requests:', error);
+    return { data: null, error };
+  }
+  return { data, error: null };
+}
+
+export async function getLeaveStats(employeeId: string) {
+  const supabase = await createSupabaseUserServerActionClient();
+  
+  // Get current employee if not provided
+  if (!employeeId) {
+    const { data: userData } = await supabase.auth.getUser();
+    if (!userData.user) {
+      return { data: null, error: 'User not authenticated' };
+    }
+    
+    const { data: empData } = await supabase
+      .from('employees')
+      .select('id')
+      .eq('user_id', userData.user.id)
+      .single();
+    
+    if (!empData) {
+      return { data: null, error: 'Employee not found' };
+    }
+    
+    employeeId = empData.id;
+  }
+  
+  const { data, error } = await supabase.rpc('get_employee_leave_stats', {
+    p_employee_id: employeeId,
+  });
+  
+  if (error) {
+    console.error('Error getting leave stats:', error);
+    return { data: null, error };
+  }
+  return { data, error: null };
+}
+
+export async function createLeaveRequest(params: {
+  employee_id: string;
+  leave_type: string;
+  start_date: string;
+  end_date: string;
+  reason: string;
+  substitute_employee_id: string;
+  substitute_employee_name: string;
+}) {
+  const supabase = await createSupabaseUserServerActionClient();
+  
+  // Check for conflicts
+  const { data: conflictData } = await supabase.rpc('check_leave_conflict', {
+    p_employee_id: params.employee_id,
+    p_start_date: params.start_date,
+    p_end_date: params.end_date,
+  });
+  
+  if (conflictData) {
+    return { data: null, error: 'يوجد تعارض مع إجازة أخرى في نفس الفترة' };
+  }
+  
+  const { data, error } = await supabase
+    .from('leave_requests')
+    .insert({
+      employee_id: params.employee_id,
+      leave_type: params.leave_type,
+      start_date: params.start_date,
+      end_date: params.end_date,
+      reason: params.reason,
+      substitute_employee_id: params.substitute_employee_id,
+      substitute_employee_name: params.substitute_employee_name,
+      status: 'قيد المراجعة',
+    })
+    .select()
+    .single();
+  
+  if (error) {
+    console.error('Error creating leave request:', error);
+    return { data: null, error: error.message };
+  }
+  return { data, error: null };
+}
