@@ -9,7 +9,6 @@ import {
 import { getIsAppAdmin } from "@/data/user/user";
 import {
   Book,
-  Briefcase,
   CreditCard,
   FileLineChart,
   HelpCircle,
@@ -36,11 +35,7 @@ const adminLinks = [
     href: `/app_admin/users`,
     icon: <Users className="h-5 w-5" />,
   },
-  {
-    label: "Workspaces",
-    href: `/app_admin/workspaces`,
-    icon: <Briefcase className="h-5 w-5" />,
-  },
+
   {
     label: "Application Settings",
     href: `/app_admin/settings`,

@@ -20,7 +20,7 @@ export function CustomersTable({ customers }: CustomersTableProps) {
       <TableHeader>
         <TableRow>
           <TableHead>Customer ID</TableHead>
-          <TableHead>Workspace ID</TableHead>
+
           <TableHead>Default Currency</TableHead>
           <TableHead>Billing Email</TableHead>
           <TableHead>Metadata</TableHead>
@@ -30,7 +30,7 @@ export function CustomersTable({ customers }: CustomersTableProps) {
         {customers.map((customer) => (
           <TableRow key={customer.gateway_customer_id}>
             <TableCell>{customer.gateway_customer_id}</TableCell>
-            <TableCell>{customer.workspace_id}</TableCell>
+
             <TableCell>{customer.default_currency || "N/A"}</TableCell>
             <TableCell>{customer.billing_email}</TableCell>
             <TableCell>{JSON.stringify(customer.metadata)}</TableCell>

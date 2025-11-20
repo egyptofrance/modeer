@@ -85,10 +85,10 @@ function InviteUsersDialog() {
       <DialogContent className="flex flex-col gap-2">
         <DialogHeader>
           <DialogTitle className="text-lg">
-            Invite users to your team workspace
+            Invite users to your team
           </DialogTitle>
           <DialogDescription>
-            Invite users to your team workspace, assign privileges and
+            Invite users to your team, assign privileges and
             collaborate together.
           </DialogDescription>
         </DialogHeader>
@@ -97,11 +97,11 @@ function InviteUsersDialog() {
             images={[
               {
                 src: "/images/tips/members.jpg",
-                alt: "A team workspace can have multiple members. Workspace admins can invite users to the workspace.",
+                alt: "A team can have multiple members. Admins can invite users to the team.",
               },
               {
                 src: "/images/tips/invite.jpg",
-                alt: "Invite users to your team worksapce, assign privileges and collaborate together.",
+                alt: "Invite users to your team, assign privileges and collaborate together.",
               },
             ]}
           />
@@ -201,7 +201,7 @@ function ConnectStripeDialog() {
                 alt: "Configure stripe webhooks",
               },
               {
-                src: "/images/tips/workspace-billing-stripe-products-visible.jpg",
+                src: "/images/tips/admin-payments.jpg",
                 alt: "Stripe products visible to your users.",
               },
             ]}

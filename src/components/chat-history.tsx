@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/table";
 
 import { getChatsHistory } from "@/data/user/chats";
-import { getCachedProjectBySlug } from "@/rsc-data/user/projects";
+
 import {
   serverGetLoggedInUserVerified
 } from "@/utils/server/serverGetLoggedInUser";
