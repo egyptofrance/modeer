@@ -2,7 +2,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { getIncentiveSettings, updateIncentiveSettings } from '@/app/actions/admin-actions';
+import { getIncentiveSettings, updateIncentiveSetting } from '@/app/actions/incentive-actions';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
