@@ -1,48 +1,79 @@
 import { serverGetLoggedInUserVerified } from "@/utils/server/serverGetLoggedInUser";
 import { redirect } from "next/navigation";
-import { getMaybeDefaultWorkspace } from "@/data/user/workspaces";
-import { getWorkspaceSubPath } from "@/utils/workspaces";
-import Link from "next/link";
+import { supabaseAdminClient } from "@/supabase-clients/admin/supabaseAdminClient";
 
 /**
- * Dashboard Page
+ * Dashboard Page - Employee Role-Based Redirect
  * 
- * This page handles the redirect after onboarding completion.
- * It attempts to redirect users to their default workspace home page.
- * If no workspace is found, it displays a message with a link to create one.
+ * This page redirects employees to their role-specific dashboards
+ * based on their employee_type instead of requiring workspace creation.
  */
 export default async function DashboardPage() {
   const user = await serverGetLoggedInUserVerified();
   
   try {
-    // Attempt to get the user's default workspace
-    const initialWorkspace = await getMaybeDefaultWorkspace();
-    
-    if (initialWorkspace) {
-      // Redirect to workspace home page
-      redirect(getWorkspaceSubPath(initialWorkspace.workspace, "/home"));
+    // Get employee data with their type
+    const { data: employee, error } = await supabaseAdminClient
+      .from('employees')
+      .select(`
+        *,
+        employee_types (
+          name_ar,
+          permission_level
+        )
+      `)
+      .eq('user_id', user.id)
+      .single();
+
+    if (error || !employee) {
+      // If not an employee, redirect to home
+      redirect('/');
     }
+
+    const employeeType = employee.employee_types;
+    const permissionLevel = employeeType?.permission_level || 0;
+
+    // Redirect based on employee type and permission level
+    if (permissionLevel >= 90) {
+      // مدير عام - General Manager
+      redirect('/admin/dashboard');
+    } else if (permissionLevel >= 80) {
+      // مدير قسم فني - Technical Department Manager
+      redirect('/admin/dashboard');
+    } else if (permissionLevel >= 70) {
+      // مراقبة الجودة - Quality Control
+      redirect('/quality-control/calls');
+    } else if (permissionLevel >= 50) {
+      // موظف كول سنتر - Call Center Employee
+      redirect('/employee/call-center');
+    } else if (permissionLevel >= 40) {
+      // Check specific role for reception, delegate, or technician
+      const roleNameAr = employeeType?.name_ar || '';
+      
+      if (roleNameAr.includes('ريسبشن')) {
+        // موظف ريسبشن - Reception Employee
+        redirect('/reception/activate-coupon');
+      } else if (roleNameAr.includes('مندوب')) {
+        // مندوب - Delegate
+        redirect('/employee/profile');
+      } else if (roleNameAr.includes('فني')) {
+        // فني صيانة - Technician
+        redirect('/employee/profile');
+      } else {
+        // Default for level 40
+        redirect('/employee/profile');
+      }
+    } else if (permissionLevel >= 30) {
+      // سائق - Driver
+      redirect('/driver/my-vehicle');
+    } else {
+      // Default redirect for unknown roles
+      redirect('/employee/profile');
+    }
+
   } catch (error) {
-    console.error("Failed to get default workspace:", error);
+    console.error("Failed to get employee data:", error);
+    // On error, redirect to home
+    redirect('/');
   }
-  
-  // If no workspace found, display a message
-  return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-50">
-      <div className="text-center p-8 bg-white rounded-lg shadow-md max-w-md">
-        <h1 className="text-2xl font-bold mb-4 text-gray-800">
-          Welcome, {user.email}!
-        </h1>
-        <p className="text-gray-600 mb-6">
-          No workspace found. Please create a new workspace to get started.
-        </p>
-        <Link 
-          href="/onboarding" 
-          className="inline-block px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors"
-        >
-          Create Workspace
-        </Link>
-      </div>
-    </div>
-  );
 }
