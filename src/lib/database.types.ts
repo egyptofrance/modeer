@@ -3627,6 +3627,45 @@ export type Database = {
         Args: { member_id: string; new_permissions: Json; workspace_id: string }
         Returns: undefined
       }
+      get_delegate_orders: {
+        Args: { delegate_id: string }
+        Returns: {
+          id: string
+          customer_name: string
+          customer_phone: string
+          customer_email: string | null
+          device_type: string
+          device_brand: string
+          problem_description: string
+          delivery_method: string
+          order_status: string
+          coupon_code: string
+          created_at: string
+          pickup_date: string | null
+          delivery_date: string | null
+          delegate_notes: string | null
+          call_center_employee_name: string
+        }[]
+      }
+      get_delegate_stats: {
+        Args: { delegate_id: string }
+        Returns: {
+          total_orders: number
+          pending_orders: number
+          picked_up_orders: number
+          delivered_orders: number
+          completed_orders: number
+        }[]
+      }
+      update_order_status: {
+        Args: {
+          order_id: string
+          new_status: string
+          delegate_id: string
+          notes?: string | null
+        }
+        Returns: boolean
+      }
     }
     Enums: {
       app_role: "admin"
