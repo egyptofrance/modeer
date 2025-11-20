@@ -1,10 +1,18 @@
 import "@/styles/globals.css";
-import { GeistSans } from "geist/font/sans";
+import { Tajawal } from "next/font/google";
 import { Metadata } from "next";
 import { getMessages } from "next-intl/server";
 import "server-only";
 import { AffonsoWrapper } from "./AffonsoWrapper";
 import { AppProviders } from "./AppProviders";
+
+// تحميل خط Tajawal بجميع الأوزان
+const tajawal = Tajawal({
+  subsets: ["arabic", "latin"],
+  weight: ["200", "300", "400", "500", "700", "800", "900"],
+  variable: "--font-tajawal",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   icons: {
@@ -35,7 +43,7 @@ export default async function RootLayout(props: {
   return (
     <html
       lang={locale}
-      className={GeistSans.className}
+      className={tajawal.className}
       suppressHydrationWarning
     >
       <head>
