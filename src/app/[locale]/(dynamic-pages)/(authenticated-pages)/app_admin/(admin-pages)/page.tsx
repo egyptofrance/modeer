@@ -31,12 +31,7 @@ const adminLinks = [
     href: "/app_admin/users",
     icon: <Users className="h-8 w-8" />,
   },
-  {
-    title: "Workspaces",
-    description: "Oversee and manage workspaces",
-    href: "/app_admin/workspaces",
-    icon: <Briefcase className="h-8 w-8" />,
-  },
+
   {
     title: "Application Settings",
     description: "Configure global application settings",

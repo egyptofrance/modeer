@@ -1,7 +1,7 @@
-import { getWorkspaceSlugById } from "@/data/user/workspaces";
+// import { getWorkspaceSlugById } from "@/data/user/workspaces";
 import { supabaseAdminClient } from "@/supabase-clients/admin/supabaseAdminClient";
 import { superAdminGetUserIdByEmail } from "@/supabase-clients/admin/user";
-import { superAdminGetWorkspaceAdmins } from "@/supabase-clients/admin/workspaces";
+// import { superAdminGetWorkspaceAdmins } from "@/supabase-clients/admin/workspaces";
 import { supabaseAnonClient } from "@/supabase-clients/anon/supabaseAnonClient";
 import { DBTable, DBTableInsertPayload } from "@/types";
 import { convertAmountToUSD } from "@/utils/currency";
@@ -429,10 +429,11 @@ export class StripePaymentGateway implements PaymentGateway {
       workspaceId: string,
     ): Promise<DBTable<"billing_customers">> => {
       try {
-        const workspaceAdmins = await superAdminGetWorkspaceAdmins(workspaceId);
-        const orgAdminUserId = workspaceAdmins[0];
-        if (!orgAdminUserId)
-          throw new Error("Organization admin email not found");
+        // const workspaceAdmins = await superAdminGetWorkspaceAdmins(workspaceId);
+        // const orgAdminUserId = workspaceAdmins[0];
+        // if (!orgAdminUserId)
+        //   throw new Error("Organization admin email not found");
+        throw new Error("Workspace billing is disabled");
         const { data: orgAdminUser, error: orgAdminUserError } =
           await supabaseAdminClient.auth.admin.getUserById(orgAdminUserId);
         if (orgAdminUserError) throw orgAdminUserError;
@@ -976,7 +977,8 @@ export class StripePaymentGateway implements PaymentGateway {
         throw new Error("Price not found");
       }
 
-      const workspaceSlug = await getWorkspaceSlugById(workspaceId);
+      // const workspaceSlug = await getWorkspaceSlugById(workspaceId);
+      const workspaceSlug = 'default'; // Temporary fallback
 
       const sessionConfig: Stripe.Checkout.SessionCreateParams = {
         customer: customer.gateway_customer_id,
