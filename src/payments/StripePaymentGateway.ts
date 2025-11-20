@@ -434,18 +434,18 @@ export class StripePaymentGateway implements PaymentGateway {
         // if (!orgAdminUserId)
         //   throw new Error("Organization admin email not found");
         throw new Error("Workspace billing is disabled");
-        const { data: orgAdminUser, error: orgAdminUserError } =
-          await supabaseAdminClient.auth.admin.getUserById(orgAdminUserId);
-        if (orgAdminUserError) throw orgAdminUserError;
-        if (!orgAdminUser) throw new Error("Organization admin user not found");
-        const maybeEmail = orgAdminUser.user.email;
-        if (!maybeEmail) throw new Error("Organization admin email not found");
-        return this.db.createCustomer(
-          {
-            billing_email: maybeEmail,
-          },
-          workspaceId,
-        );
+        // const { data: orgAdminUser, error: orgAdminUserError } =
+        //   await supabaseAdminClient.auth.admin.getUserById(orgAdminUserId);
+        // if (orgAdminUserError) throw orgAdminUserError;
+        // if (!orgAdminUser) throw new Error("Organization admin user not found");
+        // const maybeEmail = orgAdminUser.user.email;
+        // if (!maybeEmail) throw new Error("Organization admin email not found");
+        // return this.db.createCustomer(
+        //   {
+        //     billing_email: maybeEmail,
+        //   },
+        //   workspaceId,
+        // );
       } catch (error) {
         console.log("error", error);
         return this.util.handleStripeError(error);
