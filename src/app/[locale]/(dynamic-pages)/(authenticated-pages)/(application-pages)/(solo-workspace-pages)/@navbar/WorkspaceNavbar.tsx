@@ -1,50 +1,33 @@
-// https://github.com/vercel/next.js/issues/58272
+// This component is a no-op since the workspace feature is removed.
+// It is kept as a placeholder to prevent import errors in other files.
+
 import { Link } from "@/components/intl-link";
-import { Skeleton } from "@/components/ui/skeleton";
 import { T } from "@/components/ui/Typography";
-import { getCachedSoloWorkspace } from "@/rsc-data/user/workspaces";
-import { WorkspaceWithMembershipType } from "@/types";
-import { getWorkspaceSubPath } from "@/utils/workspaces";
 import { notFound } from "next/navigation";
-import { Suspense } from "react";
 
 export async function generateMetadata() {
-  try {
-    const workspace = await getCachedSoloWorkspace();
-
-    return {
-      title: `${workspace.name} | Workspace | Nextbase Ultimate`,
-      description: "Workspace title",
-    };
-  } catch (error) {
-    return {
-      title: "Not found",
-    };
-  }
+  return {
+    title: "Dashboard | Nextbase Ultimate",
+    description: "Dashboard",
+  };
 }
 
-async function Title({
-  workspace,
-}: {
-  workspace: WorkspaceWithMembershipType;
-}) {
+async function Title() {
   return (
     <div className="capitalize flex items-center gap-2">
-      <T.P> {workspace.name} Workspace</T.P>
+      <T.P> Dashboard</T.P>
     </div>
   );
 }
 
 export async function WorkspaceNavbar() {
+  // Since the workspace feature is removed, we return a simplified navbar
   try {
-    const workspace = await getCachedSoloWorkspace();
     return (
       <div className="flex items-center">
-        <Link href={getWorkspaceSubPath(workspace, "/home")}>
+        <Link href={`/dashboard`}>
           <span className="flex items-center space-x-2">
-            <Suspense fallback={<Skeleton className="w-16 h-6" />}>
-              <Title workspace={workspace} />
-            </Suspense>
+            <Title />
           </span>
         </Link>
       </div>
