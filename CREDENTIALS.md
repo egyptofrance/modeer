@@ -5,13 +5,25 @@
 
 ---
 
+## 🌐 رابط التطبيق
+
+**الرابط الرئيسي:** https://modeer.vercel.app
+
+**صفحة الدخول:** https://modeer.vercel.app/login
+
+---
+
 ## 👨‍💼 الأدمن الرئيسي
 
-| البريد الإلكتروني | كلمة المرور | الصلاحيات |
-|-------------------|-------------|-----------|
-| `egyptofrance@gmail.com` | `Asd@mizo1122` | صلاحيات كاملة على النظام |
+> **ملاحظة:** بيانات الأدمن الرئيسي موجودة في Supabase Dashboard > Authentication > Users
+> 
+> للوصول إلى كلمة المرور، يمكنك:
+> 1. الدخول إلى Supabase Dashboard
+> 2. اختيار Authentication > Users
+> 3. البحث عن المستخدم الأول أو المستخدم بصلاحيات Admin
+> 4. إعادة تعيين كلمة المرور إذا لزم الأمر
 
-**رابط الدخول:** https://management.vercel.app/login
+**البريد الإلكتروني المحتمل:** `egyptofrance@gmail.com` أو أحد الإيميلات أدناه
 
 ---
 
@@ -52,6 +64,12 @@
 |------|------------------|-------------|-------|-----------------|
 | **هاني** | `hany@modeer.com` | `Hany@2025` | سائق | `/driver/my-vehicle` |
 
+### 6️⃣ موظفو الريسبشن (مستوى 40)
+
+| الاسم | البريد الإلكتروني | كلمة المرور | الدور | الصفحة الرئيسية |
+|------|------------------|-------------|-------|-----------------|
+| **نرمين الأشقر** | `nermin.elashkar@modeer.com` | `Nermin@2025` | موظف ريسبشن | `/reception/activate-coupon` |
+
 ---
 
 ## 🎯 الصفحات المتاحة حسب الدور
@@ -82,6 +100,11 @@
 - ✅ `/employee/leave` - طلبات الإجازات
 - ✅ `/employee/salary` - بيانات الراتب والحوافز
 
+### موظف ريسبشن (نرمين الأشقر)
+- ✅ `/reception/activate-coupon` - تفعيل كوبونات العملاء
+- ✅ `/reception/customers` - إدارة العملاء
+- ✅ `/employee/profile` - الملف الشخصي
+
 ### سائق (هاني)
 - ✅ `/driver/my-vehicle` - بيانات السيارة
 - ✅ `/driver/documents` - المستندات
@@ -101,8 +124,8 @@
 
 ## 🔗 روابط مهمة
 
-- **الموقع:** https://management.vercel.app
-- **صفحة الدخول:** https://management.vercel.app/login
+- **الموقع:** https://modeer.vercel.app
+- **صفحة الدخول:** https://modeer.vercel.app/login
 - **Supabase Dashboard:** https://supabase.com/dashboard/project/ceaxeyymzvyxdawzvvkk
 - **Vercel Dashboard:** https://vercel.com/naebaks-projects/management
 - **GitHub Repository:** https://github.com/egyptofrance/modeer
@@ -115,6 +138,7 @@
 2. **الصلاحيات محمية** - كل موظف يرى فقط البيانات المسموح له بها (RLS)
 3. **نظام الحوافز** - يتم حساب الحوافز تلقائياً بناءً على الأداء
 4. **الأمان** - جميع البيانات محمية بـ Row Level Security
+5. **بيانات الأدمن** - موجودة في Supabase Dashboard > Authentication
 
 ---
 
@@ -124,12 +148,14 @@
 - **Project URL:** `https://ceaxeyymzvyxdawzvvkk.supabase.co`
 - **Database Name:** `management`
 - **Database Password:** `Asd@mizo1122`
+- **Anon Key:** `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNlYXhleXltenZ5eGRhd3p2dmtrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjMyMTgyODYsImV4cCI6MjA3ODc5NDI4Nn0.p1iB9luxuKQpGIVwDA4VuLAvIcS0oC35xskH8hX_HOg`
 
 ---
 
 ## 🚀 بيانات Vercel
 
 - **Project Name:** `management`
+- **Deployment URL:** `https://modeer.vercel.app`
 - **Deployment Token:** `01W4jIgO5Hrx08HEhZvQhFxe`
 - **Auto Deploy:** ✅ Enabled (من GitHub main branch)
 
@@ -176,6 +202,16 @@ SELECT create_employee_after_signup(
 - مندوب مبيعات
 - فني صيانة
 - موظف ريسبشن
+
+---
+
+## 🔑 كيفية الحصول على بيانات الأدمن
+
+1. اذهب إلى: https://supabase.com/dashboard/project/ceaxeyymzvyxdawzvvkk
+2. اختر **Authentication** من القائمة الجانبية
+3. اختر **Users**
+4. ابحث عن المستخدم الأول أو المستخدم بصلاحيات عالية
+5. يمكنك إعادة تعيين كلمة المرور من خلال **Send Password Recovery**
 
 ---
 
