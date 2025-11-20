@@ -69,38 +69,14 @@ export const getUserAvatarUrl = async (userId: string) => {
   return data.avatar_url;
 };
 
+// Workspace invitations feature removed
 export const getUserPendingInvitationsByEmail = async (userEmail: string) => {
-  const supabaseClient = await createSupabaseUserServerComponentClient();
-  const { data, error } = await supabaseClient
-    .from("workspace_invitations")
-    .select(
-      "*, inviter:user_profiles!inviter_user_id(*), invitee:user_profiles!invitee_user_id(*), workspace:workspaces(*)",
-    )
-    .ilike("invitee_user_email", `%${userEmail}%`)
-    .eq("status", "active");
-
-  if (error) {
-    throw error;
-  }
-
-  return data || [];
+  return [];
 };
 
+// Workspace invitations feature removed
 export const getUserPendingInvitationsById = async (userId: string) => {
-  const supabaseClient = await createSupabaseUserServerComponentClient();
-  const { data, error } = await supabaseClient
-    .from("workspace_invitations")
-    .select(
-      "*, inviter:user_profiles!inviter_user_id(*), invitee:user_profiles!invitee_user_id(*), workspace:workspaces(*)",
-    )
-    .eq("invitee_user_id", userId)
-    .eq("status", "active");
-
-  if (error) {
-    throw error;
-  }
-
-  return data || [];
+  return [];
 };
 
 export const uploadPublicUserAvatar = async (

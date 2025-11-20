@@ -1,5 +1,5 @@
 import { NotificationsDialog } from "@/components/notifications-dialog";
-import { CreateWorkspaceDialogProvider } from "@/contexts/CreateWorkspaceDialogContext";
+
 import { LoggedInUserProvider } from "@/contexts/LoggedInUserContext";
 import { NotificationsProvider } from "@/contexts/NotificationsContext";
 import { serverGetLoggedInUserVerified } from "@/utils/server/serverGetLoggedInUser";
@@ -22,14 +22,12 @@ export default async function Layout({ children }: { children: ReactNode }) {
   }
 
   return (
-    <CreateWorkspaceDialogProvider>
-      <LoggedInUserProvider user={user}>
-        <NotificationsProvider>
-          {children}
-          <NotificationsDialog />
-          <PosthogIdentify />
-        </NotificationsProvider>
-      </LoggedInUserProvider>
-    </CreateWorkspaceDialogProvider>
+    <LoggedInUserProvider user={user}>
+      <NotificationsProvider>
+        {children}
+        <NotificationsDialog />
+        <PosthogIdentify />
+      </NotificationsProvider>
+    </LoggedInUserProvider>
   );
 }
