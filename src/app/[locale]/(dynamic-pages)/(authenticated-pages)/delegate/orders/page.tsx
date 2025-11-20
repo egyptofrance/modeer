@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { createClient } from '@/utils/supabase/client';
+import { supabaseUserClientComponent } from '@/supabase-clients/user/supabaseUserClientComponent';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -65,7 +65,7 @@ export default function DelegateOrdersPage() {
   const [notes, setNotes] = useState('');
   const [userId, setUserId] = useState<string | null>(null);
   const { toast } = useToast();
-  const supabase = createClient();
+  const supabase = supabaseUserClientComponent;
 
   useEffect(() => {
     fetchUserAndOrders();
