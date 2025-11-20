@@ -8,10 +8,10 @@ import { ProfileUpdate } from "./ProfileUpdate";
 import { TermsAcceptance } from "./TermsAcceptance";
 
 import { Stepper } from "@/components/stepper";
-import { Building, Paperclip, UserCheck } from "lucide-react";
+import { Paperclip, UserCheck } from "lucide-react";
 import { FinishingUp } from "./FinishingUp";
 import { useOnboarding } from "./OnboardingContext";
-import { SetupWorkspaces } from "./SetupWorkspaces";
+// import { SetupWorkspaces } from "./SetupWorkspaces"; // Removed
 
 const MotionCard = motion(Card);
 
@@ -24,6 +24,7 @@ export function OnboardingFlowContent() {
     exit: { opacity: 0, y: -50 },
   };
 
+  // Removed Workspace step
   const steps = [
     {
       name: "Terms",
@@ -35,11 +36,12 @@ export function OnboardingFlowContent() {
       icon: <UserCheck className="w-5 h-5 mr-2" />,
       isActive: currentStep === "PROFILE",
     },
-    {
-      name: "Workspace",
-      icon: <Building className="w-5 h-5 mr-2" />,
-      isActive: currentStep === "SETUP_WORKSPACES",
-    },
+    // Removed Workspace step
+    // {
+    //   name: "Workspace",
+    //   icon: <Building className="w-5 h-5 mr-2" />,
+    //   isActive: currentStep === "SETUP_WORKSPACES",
+    // },
   ];
 
   if (currentStep === "FINISHING_UP") {
@@ -65,7 +67,8 @@ export function OnboardingFlowContent() {
             >
               {currentStep === "TERMS" && <TermsAcceptance />}
               {currentStep === "PROFILE" && <ProfileUpdate />}
-              {currentStep === "SETUP_WORKSPACES" && <SetupWorkspaces />}
+              {/* Removed Workspace step */}
+              {/* {currentStep === "SETUP_WORKSPACES" && <SetupWorkspaces />} */}
             </MotionCard>
           </AnimatePresence>
         </CardContent>

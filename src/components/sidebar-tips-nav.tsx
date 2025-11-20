@@ -17,7 +17,6 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { Typography } from "@/components/ui/Typography";
-import { SlimWorkspace } from "@/types";
 import {
   BookOpen,
   DollarSign,
@@ -28,16 +27,12 @@ import {
   Users,
 } from "lucide-react";
 import { useState } from "react";
-import { CreateWorkspaceButton } from "./create-workspace-button";
 import { Link } from "./intl-link";
 import { SimpleImageCarousel } from "./simple-image-carousel";
 import { Button } from "./ui/button";
 
-function CreateTeamWorkspaceDialog({
-  workspace,
-}: {
-  workspace: SlimWorkspace;
-}) {
+// Replaced CreateTeamWorkspaceDialog with a no-op dialog
+function CreateTeamWorkspaceDialog() {
   const [isOpen, setIsOpen] = useState(false);
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -45,40 +40,37 @@ function CreateTeamWorkspaceDialog({
         <SidebarMenuItem>
           <SidebarMenuButton>
             <Users className="h-4 w-4" />
-            <span>1. Create a Team Workspace</span>
+            <span>1. Team Collaboration (Disabled)</span>
           </SidebarMenuButton>
         </SidebarMenuItem>
       </DialogTrigger>
       <DialogContent className="flex flex-col gap-2">
         <DialogHeader>
           <DialogTitle className="text-lg">
-            Nextbase Ultimate supports Solo and Team workspaces
+            Team Collaboration is Disabled
           </DialogTitle>
           <DialogDescription>
-            Create a team workspace to collaborate with your team members.
+            This feature is disabled in your current setup (Single-tenant).
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4">
           <Typography.Subtle>
-            By default, Nextbase Ultimate creates a Solo workspace for users
-            after they first onboard.
+            Your application is configured for a single organization (Single-tenant).
+            Team collaboration is managed via user roles and permissions.
           </Typography.Subtle>
           <Typography.Subtle>
-            However you can create a Team workspace by clicking the button below
-            or pressing the shortcut{" "}
-            <strong>
-              <kbd>w</kbd>
-            </strong>
-            .
+            To enable this feature, you would need to switch to a multi-tenant setup.
           </Typography.Subtle>
         </div>
-        <CreateWorkspaceButton onClick={() => setIsOpen(false)} />
+        <DialogClose asChild>
+          <Button variant="default">Got it!</Button>
+        </DialogClose>
       </DialogContent>
     </Dialog>
   );
 }
 
-function InviteUsersDialog({ workspace }: { workspace: SlimWorkspace }) {
+function InviteUsersDialog() {
   const [isOpen, setIsOpen] = useState(false);
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -122,7 +114,7 @@ function InviteUsersDialog({ workspace }: { workspace: SlimWorkspace }) {
   );
 }
 
-function AdminUserDialog({ workspace }: { workspace: SlimWorkspace }) {
+function AdminUserDialog() {
   const [isOpen, setIsOpen] = useState(false);
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -175,7 +167,7 @@ function AdminUserDialog({ workspace }: { workspace: SlimWorkspace }) {
   );
 }
 
-function ConnectStripeDialog({ workspace }: { workspace: SlimWorkspace }) {
+function ConnectStripeDialog() {
   const [isOpen, setIsOpen] = useState(false);
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -228,7 +220,7 @@ function ConnectStripeDialog({ workspace }: { workspace: SlimWorkspace }) {
   );
 }
 
-function AdminBlogPostDialog({ workspace }: { workspace: SlimWorkspace }) {
+function AdminBlogPostDialog() {
   const [isOpen, setIsOpen] = useState(false);
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -276,7 +268,7 @@ function AdminBlogPostDialog({ workspace }: { workspace: SlimWorkspace }) {
   );
 }
 
-function WriteDocsArticleDialog({ workspace }: { workspace: SlimWorkspace }) {
+function WriteDocsArticleDialog() {
   const [isOpen, setIsOpen] = useState(false);
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -321,7 +313,7 @@ function WriteDocsArticleDialog({ workspace }: { workspace: SlimWorkspace }) {
   );
 }
 
-function MoreFeaturesDialog({ workspace }: { workspace: SlimWorkspace }) {
+function MoreFeaturesDialog() {
   const [isOpen, setIsOpen] = useState(false);
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -329,103 +321,51 @@ function MoreFeaturesDialog({ workspace }: { workspace: SlimWorkspace }) {
         <SidebarMenuItem>
           <SidebarMenuButton>
             <Sparkles className="h-4 w-4" />
-            <span>7. More Exciting Features</span>
+            <span>7. More Features</span>
           </SidebarMenuButton>
         </SidebarMenuItem>
       </DialogTrigger>
-      <DialogContent className="flex flex-col gap-4">
+      <DialogContent className="flex flex-col gap-2">
         <DialogHeader>
           <DialogTitle className="text-lg">
-            Discover More Powerful Features
+            Nextbase Ultimate is packed with features
           </DialogTitle>
           <DialogDescription>
-            Explore additional admin tools and upcoming AI integrations.
+            Explore the full potential of Nextbase Ultimate.
           </DialogDescription>
         </DialogHeader>
-        <div className="space-y-4">
-          <div>
-            <Typography.Small>
-              Nextbase Ultimate includes several powerful admin tools to help
-              you manage your application:
-            </Typography.Small>
-            <Typography.List>
-              <li>
-                <Typography.Subtle>
-                  <span className="text-foreground font-semibold">
-                    {" "}
-                    Admin Changelog:{" "}
-                  </span>
-                  Keep track of important updates and changes in your
-                  application.
-                </Typography.Subtle>
-              </li>
-              <li>
-                <Typography.Subtle>
-                  <span className="text-foreground font-semibold">
-                    Admin Feedback:{" "}
-                  </span>
-                  Collect and manage user feedback to improve your product.
-                </Typography.Subtle>
-              </li>
-              <li>
-                <Typography.Subtle>
-                  <span className="text-foreground font-semibold">
-                    Admin Roadmap:{" "}
-                  </span>
-                  Plan and visualize your product&apos;s future developments.
-                </Typography.Subtle>
-              </li>
-            </Typography.List>
-          </div>
-
-          <div>
-            <Typography.Small>
-              More tips for OpenAI integrations coming soon!
-            </Typography.Small>
-            <Typography.List>
-              <li>
-                <Typography.Subtle>
-                  <span className="text-foreground font-semibold">
-                    Text generation
-                  </span>{" "}
-                  with OpenAI included
-                </Typography.Subtle>
-              </li>
-              <li>
-                <Typography.Subtle>
-                  <span className="text-foreground font-semibold">
-                    Image generation
-                  </span>{" "}
-                  with DALL-E included
-                </Typography.Subtle>
-              </li>
-            </Typography.List>
-            <Typography.Subtle>
-              These AI-powered tools will help you create more engaging content
-              and enhance user experiences.
-            </Typography.Subtle>
-          </div>
+        <div className="grid gap-4">
+          <SimpleImageCarousel
+            images={[
+              {
+                src: "/images/tips/more-features.jpg",
+                alt: "Nextbase Ultimate is packed with features.",
+              },
+            ]}
+          />
         </div>
-        <DialogClose asChild>
-          <Button variant="default">Got it!</Button>
-        </DialogClose>
+        <Button variant="default" asChild>
+          <Link target="_blank" href="https://usenextbase.com/docs/v3/features">
+            Explore all features
+          </Link>
+        </Button>
       </DialogContent>
     </Dialog>
   );
 }
 
-export function SidebarTipsNav({ workspace }: { workspace: SlimWorkspace }) {
+export function SidebarTipsNav() {
   return (
-    <SidebarGroup className="group-data-[collapsible=icon]:hidden">
-      <SidebarGroupLabel>Nextbase Tips</SidebarGroupLabel>
+    <SidebarGroup>
+      <SidebarGroupLabel>Tips</SidebarGroupLabel>
       <SidebarMenu>
-        <CreateTeamWorkspaceDialog workspace={workspace} />
-        <InviteUsersDialog workspace={workspace} />
-        <AdminUserDialog workspace={workspace} />
-        <ConnectStripeDialog workspace={workspace} />
-        <AdminBlogPostDialog workspace={workspace} />
-        <WriteDocsArticleDialog workspace={workspace} />
-        <MoreFeaturesDialog workspace={workspace} />
+        <CreateTeamWorkspaceDialog />
+        <InviteUsersDialog />
+        <AdminUserDialog />
+        <ConnectStripeDialog />
+        <AdminBlogPostDialog />
+        <WriteDocsArticleDialog />
+        <MoreFeaturesDialog />
       </SidebarMenu>
     </SidebarGroup>
   );

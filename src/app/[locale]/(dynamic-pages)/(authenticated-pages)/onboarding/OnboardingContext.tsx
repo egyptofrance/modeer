@@ -7,8 +7,7 @@ import {
   updateUserFullNameAction,
   uploadPublicUserAvatarAction,
 } from "@/data/user/user";
-import { createWorkspaceAction } from "@/data/user/workspaces";
-import type { DBTable, WorkspaceInvitation } from "@/types";
+import type { DBTable } from "@/types";
 import { getRandomCuteAvatar } from "@/utils/cute-avatars";
 import type { AuthUserMetadata } from "@/utils/zod-schemas/authUserMetadata";
 import {
@@ -29,16 +28,9 @@ import { toast } from "sonner";
 /**
  * The first step is to get the user to accept the terms of service.
  * The second step is to get the user to update their profile.
- * The third step is to setup workspaces for the user.
- *  - if the user has existing invitations to workspaces, they are prompted to accept or decline and / or
- *  - if the user has no personal workspace of their own
- *  - if user already has a personal workspace, they are redirected to the dashboard
+ * The third step is to be removed.
  */
-export type FLOW_STATE =
-  | "TERMS"
-  | "PROFILE"
-  | "SETUP_WORKSPACES"
-  | "FINISHING_UP";
+export type FLOW_STATE = "TERMS" | "PROFILE" | "FINISHING_UP";
 
 interface OnboardingContextType {
   onboardingStatus: AuthUserMetadata;
@@ -53,15 +45,12 @@ interface OnboardingContextType {
   acceptTermsActionState: InferUseOptimisticActionHookReturn<
     typeof acceptTermsOfServiceAction
   >;
-  createWorkspaceActionState: InferUseOptimisticActionHookReturn<
-    typeof createWorkspaceAction
-  >;
   uploadAvatarMutation: InferUseOptimisticActionHookReturn<
     typeof uploadPublicUserAvatarAction
   >;
   avatarURLState: string | undefined;
   flowStates: FLOW_STATE[];
-  pendingInvitations: WorkspaceInvitation[];
+  pendingInvitations: []; // No more invitations
   bulkSettleInvitationsActionState: InferUseOptimisticActionHookReturn<
     typeof bulkSettleInvitationsAction
   >;
@@ -84,14 +73,14 @@ interface OnboardingProviderProps {
   userProfile: DBTable<"user_profiles">;
   onboardingStatus: AuthUserMetadata;
   userEmail: string | undefined;
-  pendingInvitations: WorkspaceInvitation[];
+  pendingInvitations: []; // No more invitations
 }
 
 function getAllFlowStates(onboardingStatus: AuthUserMetadata): FLOW_STATE[] {
   const {
     onboardingHasAcceptedTerms,
     onboardingHasCompletedProfile,
-    onboardingHasCompletedWorkspaceSetup,
+    // onboardingHasCompletedWorkspaceSetup, // Removed
   } = onboardingStatus;
   const flowStates: FLOW_STATE[] = [];
 
@@ -101,9 +90,10 @@ function getAllFlowStates(onboardingStatus: AuthUserMetadata): FLOW_STATE[] {
   if (!onboardingHasCompletedProfile) {
     flowStates.push("PROFILE");
   }
-  if (!onboardingHasCompletedWorkspaceSetup) {
-    flowStates.push("SETUP_WORKSPACES");
-  }
+  // Removed Workspace Setup step
+  // if (!onboardingHasCompletedWorkspaceSetup) {
+  //   flowStates.push("SETUP_WORKSPACES");
+  // }
   flowStates.push("FINISHING_UP");
 
   return flowStates;
@@ -116,7 +106,7 @@ function getInitialFlowState(
   const {
     onboardingHasAcceptedTerms,
     onboardingHasCompletedProfile,
-    onboardingHasCompletedWorkspaceSetup,
+    // onboardingHasCompletedWorkspaceSetup, // Removed
   } = onboardingStatus;
 
   if (!onboardingHasAcceptedTerms && flowStates.includes("TERMS")) {
@@ -127,12 +117,13 @@ function getInitialFlowState(
     return "PROFILE";
   }
 
-  if (
-    !onboardingHasCompletedWorkspaceSetup &&
-    flowStates.includes("SETUP_WORKSPACES")
-  ) {
-    return "SETUP_WORKSPACES";
-  }
+  // Removed Workspace Setup step
+  // if (
+  //   !onboardingHasCompletedWorkspaceSetup &&
+  //   flowStates.includes("SETUP_WORKSPACES")
+  // ) {
+  //   return "SETUP_WORKSPACES";
+  // }
 
   return "FINISHING_UP";
 }
@@ -199,21 +190,7 @@ export function OnboardingProvider({
     },
   );
 
-  const createWorkspaceActionState = useOptimisticAction(
-    createWorkspaceAction,
-    {
-      onExecute: () => {
-        nextStep();
-      },
-      currentState: null,
-      updateFn: () => {
-        return null;
-      },
-      onError: () => {
-        toast.error("Failed to create workspace");
-      },
-    },
-  );
+  // Removed createWorkspaceActionState
 
   const updateProfilePictureUrlActionState = useOptimisticAction(
     updateProfilePictureUrlAction,
@@ -317,7 +294,7 @@ export function OnboardingProvider({
       userEmail,
       profileUpdateActionState,
       acceptTermsActionState,
-      createWorkspaceActionState,
+      // createWorkspaceActionState, // Removed
       flowStates,
       setCurrentStep,
       uploadAvatarMutation,
@@ -333,7 +310,7 @@ export function OnboardingProvider({
       userEmail,
       profileUpdateActionState,
       acceptTermsActionState,
-      createWorkspaceActionState,
+      // createWorkspaceActionState, // Removed
       flowStates,
       setCurrentStep,
       uploadAvatarMutation,

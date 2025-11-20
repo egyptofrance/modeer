@@ -8,8 +8,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { DBTable, WorkspaceWithMembershipType } from "@/types";
-import { getWorkspaceSubPath } from "@/utils/workspaces";
+import { DBTable } from "@/types";
 import {
   ArrowLeft,
   Layers,
@@ -18,17 +17,15 @@ import {
 
 interface ProjectSidebarGroupProps {
   project: DBTable<"projects">;
-  workspace: WorkspaceWithMembershipType;
 }
 
 export function ProjectSidebarGroup({
   project,
-  workspace,
 }: ProjectSidebarGroupProps) {
   const projectLinks = [
     {
-      label: "Back to workspace",
-      href: getWorkspaceSubPath(workspace, `/home`),
+      label: "Back to Dashboard",
+      href: `/dashboard`,
       icon: <ArrowLeft className="h-5 w-5" />,
     },
     {
