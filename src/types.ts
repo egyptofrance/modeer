@@ -68,7 +68,6 @@ export type CommentWithUser = DBTable<"project_comments"> & {
 
 export type TeamMemberRowProps = {
   name?: string;
-  role: Enum<"workspace_member_role_type">;
   avatar_url?: string;
   id: string;
   index: number;
@@ -98,21 +97,4 @@ export type SAPayload<TData = undefined> =
 
 export type Message = CoreMessage & {
   id: string;
-};
-
-export type SlimWorkspace = {
-  id: string;
-  name: string;
-  slug: string;
-  membershipType: Enum<"workspace_membership_type">;
-};
-export type SlimWorkspaces = Array<SlimWorkspace>;
-export type WorkspaceWithMembershipType = DBTable<"workspaces"> & {
-  membershipType: Enum<"workspace_membership_type">;
-};
-
-export type WorkspaceInvitation = DBTable<"workspace_invitations"> & {
-  workspace: Pick<DBTable<"workspaces">, "id" | "name">;
-  inviter: DBTable<"user_profiles">;
-  invitee: DBTable<"user_profiles">;
 };

@@ -36,62 +36,9 @@ export async function createMultipleNotifications(
   return notificationsData;
 }
 
-export const createAcceptedWorkspaceInvitationNotification = async (
-  userId: string,
-  {
-    workspaceId,
-    workspaceSlug,
-    inviteeFullName,
-  }: {
-    workspaceId: string;
-    workspaceSlug: string;
-    inviteeFullName: string;
-  },
-) => {
-  const payload: Extract<
-    UserNotificationPayloadType,
-    {
-      type: "acceptedWorkspaceInvitation";
-    }
-  > = {
-    workspaceId,
-    type: "acceptedWorkspaceInvitation",
-    userFullName: inviteeFullName,
-    workspaceSlug,
-  };
 
-  return await createNotification(userId, payload);
-};
 
-export const createWorkspaceInvitationNotification = async (
-  userId: string,
-  {
-    workspaceId,
-    workspaceName,
-    inviterFullName,
-    invitationId,
-  }: {
-    workspaceId: string;
-    workspaceName: string;
-    inviterFullName: string;
-    invitationId: string;
-  },
-) => {
-  const payload: Extract<
-    UserNotificationPayloadType,
-    {
-      type: "invitedToWorkspace";
-    }
-  > = {
-    workspaceId,
-    workspaceName,
-    inviterFullName,
-    invitationId,
-    type: "invitedToWorkspace",
-  };
 
-  return await createNotification(userId, payload);
-};
 
 export const createReceivedFeedbackNotification = async ({
   feedbackId,

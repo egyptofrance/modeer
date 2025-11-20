@@ -27,7 +27,6 @@ export const dashboardRoutes = [
   `/dashboard(/.*)?`,
   `/settings(/.*)?`,
   `/profile(/.*)?`,
-  `/workspace(/.*)?`,
   `/project(/.*)?`,
   `/home(/.*)?`,
   `/settings(/.*)?`,
