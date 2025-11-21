@@ -57,13 +57,12 @@ export function shouldOnboardUser(user: User) {
   const {
     onboardingHasAcceptedTerms,
     onboardingHasCompletedProfile,
-    onboardingHasCreatedWorkspace,
   } = userMetadata;
 
+  // Workspace requirement removed - no longer needed
   return (
     !onboardingHasAcceptedTerms ||
-    !onboardingHasCompletedProfile ||
-    !onboardingHasCreatedWorkspace
+    !onboardingHasCompletedProfile
   );
 }
 
