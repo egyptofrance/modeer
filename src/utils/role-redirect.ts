@@ -3,7 +3,7 @@
  */
 export function getDefaultDashboardPath(role: string | null): string {
   if (!role) {
-    return "/workspace"; // Default Nextbase workspace
+    return "/dashboard"; // Default dashboard
   }
 
   switch (role) {
@@ -40,7 +40,7 @@ export function getDefaultDashboardPath(role: string | null): string {
       return "/employee/profile";
 
     default:
-      return "/workspace"; // Fallback to Nextbase workspace
+      return "/dashboard"; // Fallback to dashboard
   }
 }
 
@@ -62,7 +62,7 @@ export function canAccessPath(role: string | null, path: string): boolean {
     return (
       path.startsWith("/admin") ||
       path.startsWith("/employee") ||
-      path.startsWith("/workspace")
+      path.startsWith("/dashboard")
     );
   }
 
@@ -71,7 +71,7 @@ export function canAccessPath(role: string | null, path: string): boolean {
     return (
       path.startsWith("/quality-control") ||
       path.startsWith("/employee/profile") ||
-      path.startsWith("/workspace")
+      path.startsWith("/dashboard")
     );
   }
 
@@ -79,7 +79,7 @@ export function canAccessPath(role: string | null, path: string): boolean {
   if (role === "موظف كول سنتر" || role === "call_center") {
     return (
       path.startsWith("/employee") ||
-      path.startsWith("/workspace")
+      path.startsWith("/dashboard")
     );
   }
 
@@ -88,7 +88,7 @@ export function canAccessPath(role: string | null, path: string): boolean {
     return (
       path.startsWith("/driver") ||
       path.startsWith("/employee/profile") ||
-      path.startsWith("/workspace")
+      path.startsWith("/dashboard")
     );
   }
 
@@ -101,7 +101,7 @@ export function canAccessPath(role: string | null, path: string): boolean {
   ) {
     return (
       path.startsWith("/employee") ||
-      path.startsWith("/workspace")
+      path.startsWith("/dashboard")
     );
   }
 
